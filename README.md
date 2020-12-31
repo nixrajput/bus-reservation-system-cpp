@@ -1,20 +1,29 @@
 # BusReservationSystem
 
-Bus Reservation System Project based on `Object Oriented Programming` and `File Handling Concept` in C++.
+Bus Reservation System Project based on `Object Oriented Programming` and `File Handling` Concept in C++.
 
 ## Usage
 
-### Navigate to `src` folder:
+### Navigate to `src` folder
 
 `cd src`
 
-### Build:
+### Build
 
 `g++ main.cpp admin.cpp customer.cpp ticket.cpp`
 
-### Run:
+### Run
 
 Run `.exe` file in `src` folder.
+
+### Root Passwords
+
+Password : `123`
+
+### Admin Credentials
+
+Username : `admin`
+Password : `pass`
 
 ## Screenshots
 
