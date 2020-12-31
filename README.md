@@ -4,13 +4,16 @@ Bus Reservation System Project based on `Object Oriented Programming` and `File 
 
 ## Usage
 
-Navigate to `src` folder:
+### Navigate to `src` folder:
+
 `cd src`
 
-Build:
+### Build:
+
 `g++ main.cpp admin.cpp customer.cpp ticket.cpp`
 
-Run:
+### Run:
+
 Run `.exe` file in `src` folder.
 
 ## Screenshots
