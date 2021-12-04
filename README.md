@@ -12,6 +12,10 @@ cd src
 
 Build
 
+Get the latest version of Mingw-w64 via MSYS2, which provides up-to-date native builds of GCC, Mingw-w64, and other helpful C++ tools and libraries. Click here to download the MSYS2 installer. Then follow the instructions on the MSYS2 website to install Mingw-w64.
+
+Run command
+
 ```bash
 g++ main.cpp admin.cpp customer.cpp ticket.cpp
 ```

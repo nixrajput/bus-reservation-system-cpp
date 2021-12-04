@@ -13,4 +13,4 @@ public:
     void viewBookings();
     void cancelTicket();
 };
-#endif
+#endif // !CUSTOMER_H

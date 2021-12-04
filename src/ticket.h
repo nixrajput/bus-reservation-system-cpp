@@ -19,4 +19,4 @@ public:
         return name;
     }
 };
-#endif
+#endif // !TICKET_H

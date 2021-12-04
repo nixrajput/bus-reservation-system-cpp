@@ -92,7 +92,7 @@ void welcomeScreen()
     cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
     cout << "\t\t\t\t\t\t\t\t\t\t\t\t  Developed By:-           \t\n";
     cout << "\t\t\t\t\t\t\t\t\t\t\t\t                           \t\n";
-    cout << "\t\t\t\t\t\t\t\t\t\t\t\t  NIKHIL KUMAR             \t\n";
+    cout << "\t\t\t\t\t\t\t\t\t\t\t\t  NIKHIL RAJPUT            \t\n";
     cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n\n";
 
     system("pause");

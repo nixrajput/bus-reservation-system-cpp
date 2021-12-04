@@ -289,4 +289,4 @@ void Admin::deleteBus()
     ticket.close();
     remove("buses.dat");
     rename("temp.dat", "buses.dat");
-}
+}                                                                         
