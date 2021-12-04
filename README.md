@@ -4,15 +4,13 @@ Bus Reservation System Project based on `Object Oriented Programming` and `File 
 
 ## Usage
 
-Navigate to `src` folder
+* Get the latest version of Mingw-w64 via MSYS2, which provides up-to-date native builds of GCC, Mingw-w64, and other helpful C++ tools and libraries. Click here to download the MSYS2 installer. Then follow the instructions on the MSYS2 website to install Mingw-w64.
+
+* Navigate to `src` folder
 
 ```bash
 cd src
 ```
-
-### Build
-
-* Get the latest version of Mingw-w64 via MSYS2, which provides up-to-date native builds of GCC, Mingw-w64, and other helpful C++ tools and libraries. Click here to download the MSYS2 installer. Then follow the instructions on the MSYS2 website to install Mingw-w64.
 
 * Run command
 
