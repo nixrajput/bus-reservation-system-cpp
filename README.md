@@ -1,6 +1,6 @@
-# BusReservationSystem
+# Bus Reservation System Management
 
-Bus Reservation System Project based on `Object Oriented Programming` and `File Handling` Concept in C++.
+Bus Reservation System Management Project based on `Object Oriented Programming` and `File Handling` Concept in C++.
 
 ## Usage
 
