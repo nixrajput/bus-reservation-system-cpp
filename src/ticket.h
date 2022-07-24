@@ -18,6 +18,7 @@ public:
     void bookTicket();
     void cancelTicket();
     void editTicket();
+    void showTicketsByPNR();
     void showTicketsByName();
     void showTicketsByBus();
     void showTicketsBySource();
@@ -43,7 +44,8 @@ public:
     // SETTERS
     void setName(char *n)
     {
-        strcpy(name, n);
+        if (n && n[0])
+            strcpy(name, n);
     }
 };
 #endif // !TICKET_H

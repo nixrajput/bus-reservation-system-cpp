@@ -2,8 +2,6 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
-#include <conio.h>
-#include <iomanip>
 
 #include "bus.h"
 #include "ticket.h"
@@ -160,10 +158,24 @@ void Bus::editBus()
                 printHeading("EDIT BUS");
 
                 showBusDetails();
-                char n[20];
-                cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Passenger Name :-> ";
-                cin.getline(n, 20);
-                //                setName(n);
+                char s[20], d[20], sTime[20], dTime[20];
+                double fare;
+                cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Source:-> ";
+                cin.getline(s, 20);
+                cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Destination:-> ";
+                cin.getline(d, 20);
+                cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Source Time:-> ";
+                cin.getline(sTime, 20);
+                cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Destination Time:-> ";
+                cin.getline(dTime, 20);
+                cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Bus Fare:-> ";
+                cin.ignore();
+                cin >> fare;
+                setSource(s);
+                setDestination(d);
+                setSourceTime(sTime);
+                setDestinationTime(dTime);
+                setBusFare(fare);
                 tempFileStream.write((char *)this, sizeof(*this));
 
                 chk = 1;

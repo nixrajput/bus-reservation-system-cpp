@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
-#include <cstring>
+#include <fstream>
+#include <iomanip>
 
 #include "ticket.h"
 #include "bus.h"
@@ -152,8 +153,7 @@ void Ticket::cancelTicket()
     char pnr[10];
     int chk = 0;
 
-    Bus b;
-    fstream busFileStream, ticketFileStream, tempFileStream;
+    fstream busFileStream, ticketFileStream, tempFileStream, busTempFileStream;
 
     printHeading("CANCEL TICKET");
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter PNR Number:-> ";
@@ -179,17 +179,28 @@ void Ticket::cancelTicket()
             }
             else
             {
-                //                busFileStream.open("buses.dat", ios::in | ios::app | ios::binary);
-                //                busFileStream.read((char *)&b, sizeof(b));
-                //                while (!busFileStream.eof())
-                //                {
-                //                    if (strcmp(b.getBusNo(), bus.getBusNo()) == 0)
-                //                    {
-                //                        b.setCancelTicket();
-                //                    }
-                //                    busFileStream.read((char *)&b, sizeof(b));
-                //                }
-                //                busFileStream.close();
+                Bus b;
+                busFileStream.open("buses.dat", ios::in | ios::app | ios::binary);
+                busTempFileStream.open("bustemp.dat", ios::out | ios::app | ios::binary);
+
+                busFileStream.read((char *)&b, sizeof(b));
+                while (!busFileStream.eof())
+                {
+                    if (strcmp(b.getBusNo(), bus.getBusNo()) == 0)
+                    {
+                        b.setCancelTicket();
+                        busTempFileStream.write((char *)&b, sizeof(b));
+                    }
+                    else
+                    {
+                        busTempFileStream.write((char *)&b, sizeof(b));
+                    }
+                    busFileStream.read((char *)&b, sizeof(b));
+                }
+                busFileStream.close();
+                busTempFileStream.close();
+                remove("buses.dat");
+                rename("bustemp.dat", "buses.dat");
                 chk = 1;
             }
             ticketFileStream.read((char *)this, sizeof(*this));
@@ -274,6 +285,50 @@ void Ticket::editTicket()
         tempFileStream.close();
         remove("tickets.dat");
         rename("temp.dat", "tickets.dat");
+    }
+}
+
+// SHOW TICKET BY PNR
+void Ticket::showTicketsByPNR()
+{
+    system("cls");
+
+    char pnr[10];
+    int chk = 0;
+    fstream ticketFileStream;
+
+    printHeading("SHOW BOOKINGS BY PNR");
+    cout << "\n\t\t\t\t\t\t\t\t\t\tEnter PNR Number:-> ";
+    cin.ignore();
+    cin.getline(pnr, 10);
+
+    system("cls");
+
+    printHeading("BOOKINGS");
+
+    ticketFileStream.open("tickets.dat", ios::in | ios::app | ios::binary);
+    if (ticketFileStream.fail())
+    {
+        cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Open File...!!\n";
+    }
+
+    else
+    {
+        ticketFileStream.read((char *)this, sizeof(*this));
+        while (!ticketFileStream.eof())
+        {
+            if (strcmp(getPnrNo(), pnr) == 0)
+            {
+                displayTicket();
+                chk = 1;
+            }
+            ticketFileStream.read((char *)this, sizeof(*this));
+        }
+        if (chk == 0)
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tNo Bookings...!!\n";
+        }
+        ticketFileStream.close();
     }
 }
 

@@ -15,14 +15,10 @@ cd src
 * Run command
 
 ```bash
-g++ main.cpp admin.cpp customer.cpp ticket.cpp
+g++ main.cpp bus.cpp ticket.cpp
 ```
 
 * Run `.exe` file in `src` folder
-
-### Root Passwords
-
-Password : `123`
 
 ### Admin Credentials
 
@@ -31,33 +27,37 @@ Password : `pass`
 
 ## Screenshots
 
-### Root Login Screen
-
-<img width="800px" src="/assets/screenshots/root_login_screen.png" alt="Screenshot 1" />
-
 ### Welcome Screen
 
-<img width="800px" src="/assets/screenshots/welcome_screen.png" alt="Screenshot 2" />
+<img width="100%" src="/screenshots/1.png" alt="Screenshot 1" />
 
-### User Portal Screen
+### Main Menu
 
-<img width="800px" src="/assets/screenshots/user_portal_screen.png" alt="Screenshot 3" />
+<img width="100%" src="/screenshots/2.png" alt="Screenshot 2" />
 
-### Admin Portal Screen
+### User Menu
 
-<img width="800px" src="/assets/screenshots/admin_portal_screen.png" alt="Screenshot 4" />
+<img width="100%" src="/screenshots/3.png" alt="Screenshot 3" />
 
-### Add Bus Screen
+### Book Ticket
 
-<img width="800px" src="/assets/screenshots/add_bus_screen.png" alt="Screenshot 5" />
+<img width="100%" src="/screenshots/4.png" alt="Screenshot 4" />
 
-### View Bus Screen
+### Admin Menu
 
-<img width="800px" src="/assets/screenshots/view_bus_screen.png" alt="Screenshot 6" />
+<img width="100%" src="/screenshots/5.png" alt="Screenshot 5" />
+
+### Bus List
+
+<img width="100%" src="/screenshots/6.png" alt="Screenshot 6" />
 
 ## Connect With Me
 
-[<img align="left" alt="nixrajput | GitHub" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/github-brands.svg" />][website]
+[<img align="left" alt="nixrajput | Website" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/globe-icon.svg" />][website]
+
+[<img align="left" alt="nixrajput | GitHub" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/github-brands.svg" />][github]
+
+[<img align="left" alt="nixrajput | Instagram" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/instagram-brands.svg" />][instagram]
 
 [<img align="left" alt="nixrajput | Facebook" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/facebook-brands.svg" />][facebook]
 
@@ -65,11 +65,10 @@ Password : `pass`
 
 [<img align="left" alt="nixrajput | LinkedIn" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/linkedin-in-brands.svg" />][linkedin]
 
-[<img align="left" alt="nixrajput | Instagram" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/instagram-brands.svg" />][instagram]
-
+[pub]: https://pub.dev/packages/get_time_ago
 [github]: https://github.com/nixrajput
-[website]: https://github.com/nixrajput
+[website]: https://nixlab.co.in
 [facebook]: https://facebook.com/nixrajput07
-[twitter]: https://facebook.com/nixrajput07
+[twitter]: https://twitter.com/nixrajput07
 [instagram]: https://instagram.com/nixrajput
 [linkedin]: https://linkedin.com/in/nixrajput

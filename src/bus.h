@@ -86,5 +86,35 @@ public:
     {
         bookedSeats--;
     }
+
+    void setSource(char *s)
+    {
+        if (s && s[0])
+            strcpy(source, s);
+    }
+
+    void setDestination(char *d)
+    {
+        if (d && d[0])
+            strcpy(destination, d);
+    }
+
+    void setSourceTime(char *s)
+    {
+        if (s && s[0])
+            strcpy(sourceTime, s);
+    }
+
+    void setDestinationTime(char *d)
+    {
+        if (d && d[0])
+            strcpy(destinationTime, d);
+    }
+
+    void setBusFare(double f)
+    {
+        if (f)
+            busFare = f;
+    }
 };
 #endif // !BUS_H
