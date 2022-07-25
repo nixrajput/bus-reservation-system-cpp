@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void printHeading(char *header)
+void printHeading(string header)
 {
     cout << "\n\n\n\n";
     cout << "\t\t\t\t\t\t\t\t\t\t==========================================================\n";
