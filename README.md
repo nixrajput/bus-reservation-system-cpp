@@ -29,27 +29,27 @@ Password : `pass`
 
 ### Welcome Screen
 
-<img width="100%" src="/screenshots/1.png" alt="Screenshot 1" />
+![Screenshot 1](screenshots/1.png "Welcome Screen")
 
 ### Main Menu
 
-<img width="100%" src="/screenshots/2.png" alt="Screenshot 2" />
+![Screenshot 2](screenshots/2.png "Main Menu")
 
 ### User Menu
 
-<img width="100%" src="/screenshots/3.png" alt="Screenshot 3" />
+![Screenshot 3](screenshots/3.png "User Menu")
 
 ### Book Ticket
 
-<img width="100%" src="/screenshots/4.png" alt="Screenshot 4" />
+![Screenshot 4](screenshots/4.png "Book Ticket")
 
 ### Admin Menu
 
-<img width="100%" src="/screenshots/5.png" alt="Screenshot 5" />
+![Screenshot 5](screenshots/5.png "Admin Menu")
 
 ### Bus List
 
-<img width="100%" src="/screenshots/6.png" alt="Screenshot 6" />
+![Screenshot 6](screenshots/6.png "Bus List")
 
 ## Connect With Me
 
