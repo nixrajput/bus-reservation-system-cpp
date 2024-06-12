@@ -5,36 +5,28 @@
 
 using namespace std;
 
-// CLASS BUS
+// BUS CLASS
 class Bus
 {
 private:
+    // Variables
     int maxSeats, bookedSeats;
     double busFare;
     char busNo[10], source[20], destination[20], sourceTime[20], destinationTime[20];
 
 public:
-    Bus()
-    {
-        strcpy(busNo, "");
-        maxSeats = 32;
-        bookedSeats = 0;
-        busFare = 0.0;
-        strcpy(source, "");
-        strcpy(destination, "");
-        strcpy(sourceTime, "");
-        strcpy(destinationTime, "");
-    }
+    // Constructor
+    Bus();
 
-    // METHODS
+    // Methods
+    void _displayBusDetails();
     void addBus();
-    void showAllBus();
-    void showBusDetails();
-    void viewBusDetails();
-    void deleteBus();
+    void displayBuses();
+    void displayBusDetailsByNo();
+    void removeBus();
     void editBus();
 
-    // GETTERS
+    // Getters
     char *getBusNo()
     {
         return busNo;
@@ -76,7 +68,7 @@ public:
         return busFare;
     }
 
-    // SETTERS
+    // Setters
     void setBookedSeats()
     {
         bookedSeats++;
@@ -117,4 +109,5 @@ public:
             busFare = f;
     }
 };
-#endif // !BUS_H
+
+#endif // BUS_H

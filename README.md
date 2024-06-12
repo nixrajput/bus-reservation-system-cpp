@@ -1,74 +1,196 @@
-# Bus Reservation System Management
+# Bus Reservation System Management with OOP and File Handling in C++
 
-Bus Reservation System Management Project based on `Object Oriented Programming` and `File Handling` Concept in C++.
+This repository contains the Bus Reservation System Management project developed using Object Oriented Programming (OOP) and File Handling concepts in C++.
 
-## Usage
+[![Stars](https://img.shields.io/github/stars/nixrajput/bus-reservation-system-cpp?label=Stars&style=flat)][repo]
+[![Forks](https://img.shields.io/github/forks/nixrajput/bus-reservation-system-cpp?label=Forks&style=flat)][repo]
+[![Watchers](https://img.shields.io/github/watchers/nixrajput/bus-reservation-system-cpp?label=Watchers&style=flat)][repo]
+[![Contributors](https://img.shields.io/github/contributors/nixrajput/bus-reservation-system-cpp?label=Contributors&style=flat)][repo]
 
-* Get the latest version of Mingw-w64 via MSYS2, which provides up-to-date native builds of GCC, Mingw-w64, and other helpful C++ tools and libraries. [Click here](https://github.com/msys2/msys2-installer/releases/download/2022-06-03/msys2-x86_64-20220603.exe) to download the MSYS2 installer. Then follow the instructions on the MSYS2 website to install Mingw-w64.
+[![GitHub last commit](https://img.shields.io/github/last-commit/nixrajput/bus-reservation-system-cpp?label=Last+Commit&style=flat)][repo]
+[![GitHub issues](https://img.shields.io/github/issues/nixrajput/bus-reservation-system-cpp?label=Issues&style=flat)][issues]
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/nixrajput/bus-reservation-system-cpp?label=Pull+Requests&style=flat)][pulls]
+[![GitHub Licence](https://img.shields.io/github/license/nixrajput/bus-reservation-system-cpp?label=Licence&style=flat)][license]
 
-* Navigate to `src` folder
+## Table of Contents
+
+- [Bus Reservation System Management with OOP and File Handling in C++](#bus-reservation-system-management-with-oop-and-file-handling-in-c)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Sceenshots](#sceenshots)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+    - [Compilation](#compilation)
+    - [Running the Application](#running-the-application)
+    - [Admin Credentials](#admin-credentials)
+  - [File Structure](#file-structure)
+  - [Classes and Methods](#classes-and-methods)
+    - [Bus Class](#bus-class)
+    - [Reservation Class](#reservation-class)
+    - [File Handling](#file-handling)
+  - [How to Use](#how-to-use)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Sponsor Me](#sponsor-me)
+  - [Connect With Me](#connect-with-me)
+
+## Features
+
+- **Bus Management**: Add, view, and remove bus details.
+- **Reservation System**: Book, view, and cancel reservations.
+- **File Handling**: Persist bus and reservation data using file handling techniques.
+- **User Interface**: Command-line based user interface for interacting with the system.
+
+## Sceenshots
+
+- Welcome Screen
+
+![Screenshot 1](screenshots/1.png "Welcome Screen")
+
+- Main Menu
+
+![Screenshot 2](screenshots/2.png "Main Menu")
+
+- User Menu
+
+![Screenshot 3](screenshots/3.png "User Menu")
+
+- Book Ticket
+
+![Screenshot 4](screenshots/4.png "Book Ticket")
+
+- Admin Menu
+
+![Screenshot 5](screenshots/5.png "Admin Menu")
+
+- Bus List
+
+![Screenshot 6](screenshots/6.png "Bus List")
+
+## Getting Started
+
+To get started with the development or usage of this project, follow the instructions below:
+
+### Prerequisites
+
+- A C++ compiler (such as g++, clang++)
+- A suitable development environment (such as Visual Studio, Code::Blocks, or a text editor with command line tools)
+
+### Installation
+
+1. Clone this repository to your local machine:
+
+    ```bash
+    git clone https://github.com/nixrajput/bus-reservation-system.git
+    ```
+
+2. Navigate into the cloned repository directory:
+
+    ```bash
+    cd bus-reservation-system
+    ```
+
+### Compilation
+
+To compile the project, you can use the following command in the terminal:
 
 ```bash
-cd src
+g++ -o BusReservationSystem main.cpp Bus.cpp Reservation.cpp
+#or
+clang++ main.cpp Bus.cpp Reservation.cpp -o BusReservationSystem.exe
 ```
 
-* Run command
+This command assumes you have `main.cpp`, `Bus.cpp`, and `Reservation.cpp` files. Modify it according to your actual file names.
+
+### Running the Application
+
+After successfully compiling the project, you can run the application using the command:
 
 ```bash
-g++ -o main main.cpp
+./BusReservationSystem
 ```
-
-* Run `main.exe` file in `src` folder
 
 ### Admin Credentials
 
 Username : `admin`
 Password : `pass`
 
-## Screenshots
+## File Structure
 
-### Welcome Screen
+The project directory typically contains the following files:
 
-![Screenshot 1](screenshots/1.png "Welcome Screen")
+- `main.cpp`: The main entry point of the application.
+- `Bus.h` and `Bus.cpp`: Bus class definition and implementation.
+- `Reservation.h` and `Reservation.cpp`: Reservation class definition and implementation.
+- `data/`: A directory containing data files for buses and reservations.
+- `utils.h`: A file contains required utility functions.
 
-### Main Menu
+## Classes and Methods
 
-![Screenshot 2](screenshots/2.png "Main Menu")
+### Bus Class
 
-### User Menu
+This class manages bus details and includes the following methods:
 
-![Screenshot 3](screenshots/3.png "User Menu")
+- `void addBus()`: Adds a new bus.
+- `void displayBuses()`: Displays all buses.
+- `void removeBus()`: Removes a bus by ID.
 
-### Book Ticket
+### Reservation Class
 
-![Screenshot 4](screenshots/4.png "Book Ticket")
+This class manages reservations and includes the following methods:
 
-### Admin Menu
+- `void bookTicket()`: Books a new ticket.
+- `void viewReservations()`: Displays all reservations.
+- `void cancelReservation()`: Cancels a reservation by ID.
 
-![Screenshot 5](screenshots/5.png "Admin Menu")
+### File Handling
 
-### Bus List
+Data persistence is achieved using file handling concepts. The bus and reservation data are stored in separate files within the `data/` directory.
 
-![Screenshot 6](screenshots/6.png "Bus List")
+## How to Use
+
+1. **Add a Bus**: Select the option to add a bus and enter the required details.
+2. **View Buses**: Select the option to view all available buses.
+3. **Remove a Bus**: Select the option to remove a bus and provide the bus ID.
+4. **Book a Ticket**: Select the option to book a ticket and enter the required details.
+5. **View Reservations**: Select the option to view all reservations.
+6. **Cancel a Reservation**: Select the option to cancel a reservation and provide the reservation ID.
+
+## Contributing
+
+If you would like to contribute to this project, feel free to fork the repository, make your changes, and submit a pull request. Please follow the guidelines in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Sponsor Me
+
+- By sponsoring my efforts, you're not merely contributing to the development of my projects; you're investing in its growth and sustainability.
+- Your support empowers me to dedicate more time and resources to improving the project's features, addressing issues, and ensuring its continued relevance in the rapidly evolving landscape of technology.
+- Your sponsorship directly fuels innovation, fosters a vibrant community, and helps maintain the project's high standards of quality. Together, we can shape the future of the projects and make a lasting impact in the open-source community.
+- Thank you for considering sponsoring my work!
+
+[![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/nixrajput)
 
 ## Connect With Me
 
-[<img align="left" alt="nixrajput | Website" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/globe-icon.svg" />][website]
+[![GitHub: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=GitHub&logoColor=333&link=https://www.github.com/nixrajput)][github]
+[![Linkedin: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=LinkedIn&logoColor=blue&link=https://www.linkedin.com/in/nixrajput)][linkedin]
+[![Instagram: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=Instagram&link=https://www.instagram.com/nixrajput)][instagram]
+[![Twitter: nixrajput07](https://img.shields.io/badge/nixrajput-EFF7F6?logo=X&logoColor=333&link=https://x.com/nixrajput)][twitter]
+[![Telegram: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=Telegram&link=https://telegram.me/nixrajput)][telegram]
+[![Gmail: nkr.nikhi.nkr@gmail.com](https://img.shields.io/badge/nkr.nikhil.nkr@gmail.com-EFF7F6?logo=Gmail&link=mailto:nkr.nikhil.nkr@gmail.com)][gmail]
 
-[<img align="left" alt="nixrajput | GitHub" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/github-brands.svg" />][github]
-
-[<img align="left" alt="nixrajput | Instagram" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/instagram-brands.svg" />][instagram]
-
-[<img align="left" alt="nixrajput | Facebook" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/facebook-brands.svg" />][facebook]
-
-[<img align="left" alt="nixrajput | Twitter" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/twitter-brands.svg" />][twitter]
-
-[<img align="left" alt="nixrajput | LinkedIn" width="24px" src="https://raw.githubusercontent.com/nixrajput/nixlab-files/master/images/icons/linkedin-in-brands.svg" />][linkedin]
-
-[pub]: https://pub.dev/packages/get_time_ago
 [github]: https://github.com/nixrajput
-[website]: https://nixlab.co.in
-[facebook]: https://facebook.com/nixrajput07
 [twitter]: https://twitter.com/nixrajput07
 [instagram]: https://instagram.com/nixrajput
 [linkedin]: https://linkedin.com/in/nixrajput
+[telegram]: https://telegram.me/nixrajput
+[gmail]: mailto:nkr.nikhil.nkr@gmail.com
+
+[repo]: https://github.com/nixrajput/bus-reservation-system-cpp
+[issues]: https://github.com/nixrajput/bus-reservation-system-cpp
+[pulls]: https://github.com/nixrajput/bus-reservation-system-cpp/pulls
+[license]: https://github.com/nixrajput/bus-reservation-system-cpp/blob/master/LICENSE.md

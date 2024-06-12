@@ -1,32 +1,32 @@
 #include <iostream>
 #include <string.h>
 
-#include "bus.cpp"
-#include "ticket.cpp"
+#include "Bus.cpp"
+#include "Reservation.cpp"
 #include "utils.h"
 
 using namespace std;
 
-// GLOBAL FUNCTION
+// Global Functions
+void welcomeScreen();
 void mainMenu();
 void userMenu();
-void adminMenu();
 void adminLogin();
-void viewBookingsMenu();
-void welcomeScreen();
+void adminMenu();
+void reservationsMenu();
 
-// MAIN FUNCTION
+// `main` function or program entrypoint
 int main()
 {
     system("cls");
-    system("COLOR 0f");
+    system("COLOR 03");
 
     welcomeScreen();
 
     return 0;
 }
 
-//  WELCOME SCREEN FUNCTION
+//  Welcome screen function
 void welcomeScreen()
 {
     system("cls");
@@ -50,7 +50,7 @@ void welcomeScreen()
     mainMenu();
 }
 
-// MAIN MENU
+// Main menu function
 void mainMenu()
 {
     int choice;
@@ -59,7 +59,7 @@ void mainMenu()
     {
         system("cls");
 
-        // MENU ITEMS
+        // Menu items
         printHeading("MAIN MENU");
 
         cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
@@ -98,7 +98,66 @@ void mainMenu()
     }
 }
 
-// ADMIN LOGIN
+// User menu function
+void userMenu()
+{
+    int choice;
+
+    while (1)
+    {
+        system("cls");
+
+        Reservation t;
+
+        // Menu items
+        printHeading("USER MENU");
+
+        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
+        cout << "\t\t\t\t\t\t\t\t\t\t 1. Book Ticket                                  \n";
+        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
+        cout << "\t\t\t\t\t\t\t\t\t\t 2. View Ticket                                  \n";
+        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
+        cout << "\t\t\t\t\t\t\t\t\t\t 3. Cancel Ticket                                \n";
+        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
+        cout << "\t\t\t\t\t\t\t\t\t\t 4. BACK                                         \n";
+        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
+
+        cout << "\n\t\t\t\t\t\t\t\t\t\tEnter your choice:-> ";
+
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            t.bookTicket();
+            system("pause");
+            break;
+
+        case 2:
+            t.viewReservationByPNR();
+            system("pause");
+            break;
+
+        case 3:
+            t.cancelReservation();
+            system("pause");
+            break;
+
+        case 4:
+            system("cls");
+            mainMenu();
+            break;
+
+        default:
+            cout << "\n\t\t\t\t\t  Choose valid option!!! \t\t\t\n";
+            system("pause");
+            break;
+            userMenu();
+        }
+    }
+}
+
+// Admin login function
 void adminLogin()
 {
     string adminUname, adminPass;
@@ -124,71 +183,11 @@ void adminLogin()
     }
 }
 
-// USER MENU
-void userMenu()
-{
-
-    int choice;
-
-    while (1)
-    {
-        system("cls");
-
-        Ticket t;
-
-        // MENU ITEMS
-        printHeading("USER MENU");
-
-        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
-        cout << "\t\t\t\t\t\t\t\t\t\t 1. Book Ticket                                  \n";
-        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
-        cout << "\t\t\t\t\t\t\t\t\t\t 2. View Ticket                                  \n";
-        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
-        cout << "\t\t\t\t\t\t\t\t\t\t 3. Cancel Ticket                                \n";
-        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
-        cout << "\t\t\t\t\t\t\t\t\t\t 4. BACK                                         \n";
-        cout << "\t\t\t\t\t\t\t\t\t\t-------------------------------------------------\n";
-
-        cout << "\n\t\t\t\t\t\t\t\t\t\tEnter your choice:-> ";
-
-        cin >> choice;
-
-        switch (choice)
-        {
-        case 1:
-            t.bookTicket();
-            system("pause");
-            break;
-
-        case 2:
-            t.showTicketsByPNR();
-            system("pause");
-            break;
-
-        case 3:
-            t.cancelTicket();
-            system("pause");
-            break;
-
-        case 4:
-            system("cls");
-            mainMenu();
-            break;
-
-        default:
-            cout << "\n\t\t\t\t\t  Choose valid option!!! \t\t\t\n";
-            system("pause");
-            break;
-            userMenu();
-        }
-    }
-}
-
-// ADMIN MENU FUNCTION
+// Admin menu function
 void adminMenu()
 {
     Bus b;
-    Ticket t;
+    Reservation r;
 
     int choice;
 
@@ -232,31 +231,31 @@ void adminMenu()
             break;
 
         case 2:
-            b.showAllBus();
+            b.displayBuses();
             system("pause");
             break;
 
         case 3:
-            t.bookTicket();
+            r.bookTicket();
             system("pause");
             break;
 
         case 4:
-            t.editTicket();
+            r.editReservation();
             system("pause");
             break;
 
         case 5:
-            t.cancelTicket();
+            r.cancelReservation();
             system("pause");
             break;
 
         case 6:
-            viewBookingsMenu();
+            reservationsMenu();
             break;
 
         case 7:
-            b.viewBusDetails();
+            b.displayBusDetailsByNo();
             system("pause");
             break;
 
@@ -266,7 +265,7 @@ void adminMenu()
             break;
 
         case 9:
-            b.deleteBus();
+            b.removeBus();
             system("pause");
             break;
 
@@ -283,10 +282,10 @@ void adminMenu()
     }
 }
 
-// VIEW BOOKINGS MENU FUNCTION
-void viewBookingsMenu()
+// View reservations function
+void reservationsMenu()
 {
-    Ticket t;
+    Reservation t;
 
     int choice;
 
@@ -319,32 +318,32 @@ void viewBookingsMenu()
         switch (choice)
         {
         case 1:
-            t.showTicketsByPNR();
+            t.viewReservationByPNR();
             system("pause");
             break;
 
         case 2:
-            t.showTicketsByName();
+            t.viewReservationsByName();
             system("pause");
             break;
 
         case 3:
-            t.showTicketsByBus();
+            t.viewReservationsByBusNo();
             system("pause");
             break;
 
         case 4:
-            t.showTicketsBySource();
+            t.viewReservationsBySource();
             system("pause");
             break;
 
         case 5:
-            t.showTicketsByDestination();
+            t.viewReservationsByDestination();
             system("pause");
             break;
 
         case 6:
-            t.showAllTickets();
+            t.viewReservations();
             system("pause");
             break;
 
@@ -356,7 +355,7 @@ void viewBookingsMenu()
         default:
             cout << "\n\t\t\t\t\t  Choose valid option!!! \t\t\t\n";
             system("pause");
-            viewBookingsMenu();
+            reservationsMenu();
         }
     }
 }
