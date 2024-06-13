@@ -98,7 +98,7 @@ To compile the project, you can use the following command in the terminal:
 ```bash
 g++ -o BusReservationSystem main.cpp Bus.cpp Reservation.cpp
 #or
-clang++ main.cpp Bus.cpp Reservation.cpp -o BusReservationSystem.exe
+clang++ main.cpp -o BusReservationSystem.exe
 ```
 
 This command assumes you have `main.cpp`, `Bus.cpp`, and `Reservation.cpp` files. Modify it according to your actual file names.

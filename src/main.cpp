@@ -15,7 +15,7 @@ void adminLogin();
 void adminMenu();
 void reservationsMenu();
 
-// `main` function or program entrypoint
+// `main` function or program entry point
 int main()
 {
     system("cls");
