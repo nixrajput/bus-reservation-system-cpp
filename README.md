@@ -2,15 +2,15 @@
 
 This repository contains the Bus Reservation System Management project developed using Object Oriented Programming (OOP) and File Handling concepts in C++.
 
-[![Stars](https://img.shields.io/github/stars/nixrajput/bus-reservation-system-cpp-cpp?label=Stars&style=flat)][repo]
-[![Forks](https://img.shields.io/github/forks/nixrajput/bus-reservation-system-cpp-cpp?label=Forks&style=flat)][repo]
-[![Watchers](https://img.shields.io/github/watchers/nixrajput/bus-reservation-system-cpp-cpp?label=Watchers&style=flat)][repo]
-[![Contributors](https://img.shields.io/github/contributors/nixrajput/bus-reservation-system-cpp-cpp?label=Contributors&style=flat)][repo]
+[![Stars](https://img.shields.io/github/stars/nixrajput/bus-reservation-system-cpp?label=Stars&style=flat)][repo]
+[![Forks](https://img.shields.io/github/forks/nixrajput/bus-reservation-system-cpp?label=Forks&style=flat)][repo]
+[![Watchers](https://img.shields.io/github/watchers/nixrajput/bus-reservation-system-cpp?label=Watchers&style=flat)][repo]
+[![Contributors](https://img.shields.io/github/contributors/nixrajput/bus-reservation-system-cpp?label=Contributors&style=flat)][repo]
 
-[![GitHub last commit](https://img.shields.io/github/last-commit/nixrajput/bus-reservation-system-cpp-cpp?label=Last+Commit&style=flat)][repo]
-[![GitHub issues](https://img.shields.io/github/issues/nixrajput/bus-reservation-system-cpp-cpp?label=Issues&style=flat)][issues]
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/nixrajput/bus-reservation-system-cpp-cpp?label=Pull+Requests&style=flat)][pulls]
-[![GitHub Licence](https://img.shields.io/github/license/nixrajput/bus-reservation-system-cpp-cpp?label=Licence&style=flat)][license]
+[![GitHub last commit](https://img.shields.io/github/last-commit/nixrajput/bus-reservation-system-cpp?label=Last+Commit&style=flat)][repo]
+[![GitHub issues](https://img.shields.io/github/issues/nixrajput/bus-reservation-system-cpp?label=Issues&style=flat)][issues]
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/nixrajput/bus-reservation-system-cpp?label=Pull+Requests&style=flat)][pulls]
+[![GitHub Licence](https://img.shields.io/github/license/nixrajput/bus-reservation-system-cpp?label=Licence&style=flat)][license]
 
 ## Table of Contents
 
