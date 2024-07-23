@@ -11,12 +11,6 @@
 
 using namespace std;
 
-// #if defined(_WIN32) || defined(_WIN64)
-// #include <windows.h>
-// #else
-// #include <unistd.h>
-// #endif
-
 void printHeading(string header)
 {
     cout << "\n\n\n\n";
