@@ -14,10 +14,20 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
 
     - name: Install C++ tools
       run: sudo apt-get update && sudo apt-get install -y clang clang-tidy cppcheck cmake
+
+    - name: List directory contents
+      run: ls -R
+
+    - name: Check for CMakeLists.txt
+      run: |
+        if [ ! -f ./CMakeLists.txt ]; then
+          echo "CMakeLists.txt not found in the root directory."
+          exit 1
+        fi
 
     - name: Create build directory
       run: mkdir build
@@ -35,7 +45,7 @@ jobs:
       run: find . -name '*.cpp' | xargs clang-tidy -p build
 
     - name: Upload cppcheck results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: cppcheck-result
         path: cppcheck-result.xml
