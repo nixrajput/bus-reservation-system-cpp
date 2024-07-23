@@ -16,9 +16,9 @@ Reservation::Reservation() {}
 // Generate a ticket
 void Reservation::_generateTicket(char *n, Bus b)
 {
-    strcpy(name, n);
-    strcpy(pnrNo, generatePNR(99999).c_str());
-    strcpy(date, getCurrentDate().c_str());
+    strlcpy(name, n);
+    strlcpy(pnrNo, generatePNR(99999).c_str());
+    strlcpy(date, getCurrentDate().c_str());
     bus = b;
 }
 

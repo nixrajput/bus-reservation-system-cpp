@@ -13,14 +13,14 @@ using namespace std;
 // Initialie variables in constructor
 Bus::Bus()
 {
-    strcpy(busNo, "");
+    strlcpy(busNo, "");
     maxSeats = 32;
     bookedSeats = 0;
     busFare = 0.0;
-    strcpy(source, "");
-    strcpy(destination, "");
-    strcpy(sourceTime, "");
-    strcpy(destinationTime, "");
+    strlcpy(source, "");
+    strlcpy(destination, "");
+    strlcpy(sourceTime, "");
+    strlcpy(destinationTime, "");
 }
 
 // Display bus details

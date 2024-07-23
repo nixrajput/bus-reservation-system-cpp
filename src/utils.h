@@ -3,7 +3,10 @@
 
 #include <cstdlib>
 #include <string>
+#include <cstring>
+#include <limits>
 #include <ctime>
+#include <stddef.h>
 
 using namespace std;
 
@@ -31,8 +34,24 @@ string generatePNR(int n)
 string getCurrentDate()
 {
     time_t t = time(NULL);
-    tm *tPtr = localtime(&t);
+    struct tm tStruct;
+    localtime_s(&tStruct, &t);
 
-    return to_string(tPtr->tm_mday) + "-" + to_string((tPtr->tm_mon) + 1) + "-" + to_string((tPtr->tm_year) + 1900);
+    return std::to_string(tStruct.tm_mday) + "-" + std::to_string(tStruct.tm_mon + 1) + "-" + std::to_string(tStruct.tm_year + 1900);
 }
+
+size_t strlcpy(char *dst, const char *src, size_t dstsize = std::numeric_limits<size_t>::max())
+{
+    size_t srclen = std::strlen(src);
+    size_t copylen = (srclen >= dstsize) ? dstsize - 1 : srclen;
+
+    if (dstsize != 0)
+    {
+        std::memcpy(dst, src, copylen);
+        dst[copylen] = '\0'; // Null-terminate the destination buffer
+    }
+
+    return srclen; // Return the total length of the string it tried to create
+}
+
 #endif // UTILS_H

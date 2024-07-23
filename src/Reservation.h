@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Bus.h"
+#include "utils.h"
 
 // RESERVATION CLASS
 class Reservation
@@ -49,7 +50,7 @@ public:
     void setName(char *n)
     {
         if (n && n[0])
-            strcpy(name, n);
+            strlcpy(name, n);
     }
 };
 
