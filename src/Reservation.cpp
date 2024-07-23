@@ -75,7 +75,7 @@ void Reservation::bookTicket()
 
         while (!busFileStream.eof())
         {
-            if (_strcmpi(b.getSource(), from) == 0 && _strcmpi(b.getDestination(), to) == 0)
+            if (strcmp(b.getSource(), from) == 0 && strcmp(b.getDestination(), to) == 0)
             {
                 b._displayBusDetails();
                 chk = 1;
@@ -105,7 +105,7 @@ void Reservation::bookTicket()
 
             while (!busFileStream.eof())
             {
-                if (_strcmpi(b.getSource(), from) == 0 && _strcmpi(b.getDestination(), to) == 0 && strcmp(b.getBusNo(), bNo) == 0)
+                if (strcmp(b.getSource(), from) == 0 && strcmp(b.getDestination(), to) == 0 && strcmp(b.getBusNo(), bNo) == 0)
                 {
                     if (b.getBookedSeats() >= 32)
                     {
@@ -503,7 +503,7 @@ void Reservation::viewReservationsBySource()
 
         while (!ticketFileStream.eof())
         {
-            if (_strcmpi(bus.getSource(), s) == 0)
+            if (strcmp(bus.getSource(), s) == 0)
             {
                 _displayReservationDetails();
                 chk = 1;
@@ -550,7 +550,7 @@ void Reservation::viewReservationsByDestination()
 
         while (!ticketFileStream.eof())
         {
-            if (_strcmpi(bus.getDestination(), d) == 0)
+            if (strcmp(bus.getDestination(), d) == 0)
             {
                 _displayReservationDetails();
                 chk = 1;
