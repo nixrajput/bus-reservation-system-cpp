@@ -34,6 +34,7 @@ This repository contains the Bus Reservation System Management project developed
   - [License](#license)
   - [Sponsor Me](#sponsor-me)
   - [Connect With Me](#connect-with-me)
+  - [Activities](#activities)
 
 ## Features
 
@@ -167,12 +168,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Sponsor Me
 
-- By sponsoring my efforts, you're not merely contributing to the development of my projects; you're investing in its growth and sustainability.
-- Your support empowers me to dedicate more time and resources to improving the project's features, addressing issues, and ensuring its continued relevance in the rapidly evolving landscape of technology.
-- Your sponsorship directly fuels innovation, fosters a vibrant community, and helps maintain the project's high standards of quality. Together, we can shape the future of the projects and make a lasting impact in the open-source community.
-- Thank you for considering sponsoring my work!
+By sponsoring my efforts, you're not merely contributing to the development of my projects; you're investing in its growth and sustainability.
+
+Your support empowers me to dedicate more time and resources to improving the project's features, addressing issues, and ensuring its continued relevance in the rapidly evolving landscape of technology.
+
+Your sponsorship directly fuels innovation, fosters a vibrant community, and helps maintain the project's high standards of quality. Together, we can shape the future of the projects and make a lasting impact in the open-source community.
+
+Thank you for considering sponsoring my work!
 
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/nixrajput)
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/nixrajput)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/nixrajput)
 
 ## Connect With Me
 
@@ -182,6 +190,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [![Twitter: nixrajput07](https://img.shields.io/badge/nixrajput-EFF7F6?logo=X&logoColor=333&link=https://x.com/nixrajput)][twitter]
 [![Telegram: nixrajput](https://img.shields.io/badge/nixrajput-EFF7F6?logo=Telegram&link=https://telegram.me/nixrajput)][telegram]
 [![Gmail: nkr.nikhi.nkr@gmail.com](https://img.shields.io/badge/nkr.nikhil.nkr@gmail.com-EFF7F6?logo=Gmail&link=mailto:nkr.nikhil.nkr@gmail.com)][gmail]
+
+## Activities
+
+![Alt](https://repobeats.axiom.co/api/embed/5d7dc395d3509bb6c43c35cc6d1ef043e1ae6e2f.svg "Repobeats analytics image")
 
 [github]: https://github.com/nixrajput
 [twitter]: https://twitter.com/nixrajput07
