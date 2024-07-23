@@ -1,15 +1,21 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <iostream>
 #include <cstdlib>
 #include <string>
 #include <cstring>
 #include <limits>
 #include <ctime>
 #include <stddef.h>
+#include <sstream>
 
 using namespace std;
+
+// #if defined(_WIN32) || defined(_WIN64)
+// #include <windows.h>
+// #else
+// #include <unistd.h>
+// #endif
 
 void printHeading(string header)
 {
@@ -36,9 +42,22 @@ string getCurrentDate()
 {
     time_t t = time(NULL);
     struct tm tStruct;
-    localtime_s(&tStruct, &t);
 
-    return to_string(tStruct.tm_mday) + "-" + to_string(tStruct.tm_mon + 1) + "-" + to_string(tStruct.tm_year + 1900);
+#if defined(_WIN32) || defined(_WIN64)
+    // Windows: Use localtime_s
+    localtime_s(&tStruct, &t);
+#else
+    // POSIX-compliant systems (Linux and macOS): Use localtime_r
+    localtime_r(&t, &tStruct);
+#endif
+
+    // Use stringstream for efficient string construction
+    ostringstream oss;
+    oss << tStruct.tm_mday << "-"
+        << (tStruct.tm_mon + 1) << "-"
+        << (tStruct.tm_year + 1900);
+
+    return oss.str();
 }
 
 size_t strlcpy(char *dst, const char *src, size_t dstsize = numeric_limits<size_t>::max())
