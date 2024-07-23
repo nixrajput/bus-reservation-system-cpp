@@ -409,7 +409,7 @@ void Reservation::viewReservationsByName()
 
         while (!ticketFileStream.eof())
         {
-            if (strcmpi(getName(), n) == 0)
+            if (strcmp(getName(), n) == 0)
             {
                 _displayReservationDetails();
                 chk = 1;
