@@ -1,5 +1,6 @@
 .vscode/
 data/
+out/
 
 # Prerequisites
 *.d
