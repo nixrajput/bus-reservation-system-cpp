@@ -1,0 +1,48 @@
+name: Version Check
+
+# Every PR must bump the root VERSION file (plain "x.y.z"). Release tags it on
+# merge. Used by repos with no package manifest (Go, C++, Shell).
+on:
+  pull_request:
+    branches: ["master"]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  version-bumped:
+    name: version bumped
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # need the base branch to diff the version
+          persist-credentials: false
+      - name: Read versions
+        id: v
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          pr=$(tr -d ' \r\n' < VERSION)
+          # If VERSION doesn't exist on the base yet (the PR that introduces it),
+          # treat the base as 0.0.0 so any real version passes the bump check.
+          base=$(git show "origin/${{ github.base_ref }}:VERSION" 2>/dev/null | tr -d ' \r\n' || true)
+          base=${base:-0.0.0}
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+      - name: Compare
+        env:
+          PR: ${{ steps.v.outputs.pr }}
+          BASE: ${{ steps.v.outputs.base }}
+        run: |
+          echo "base=$BASE  pr=$PR"
+          if [ "$PR" = "$BASE" ]; then
+            echo "::error::VERSION not bumped (still $BASE)."
+            exit 1
+          fi
+          greater=$(printf '%s\n%s\n' "$BASE" "$PR" | sort -V | tail -n1)
+          if [ "$greater" != "$PR" ]; then
+            echo "::error::VERSION $PR is lower than base $BASE."
+            exit 1
+          fi
+          echo "Version bumped $BASE -> $PR ✓"
