@@ -1,0 +1,39 @@
+name: Release
+
+# On push to the default branch (a merged PR), tag v<VERSION> and create a
+# GitHub Release with generated notes — unless the tag already exists. For repos
+# with no package manifest (C++, Shell). For Go (siphon) the existing GoReleaser
+# workflow is itself triggered by this tag and builds the binaries.
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Tag and release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read version
+        id: v
+        run: echo "tag=v$(tr -d ' \r\n' < VERSION)" >> "$GITHUB_OUTPUT"
+      - name: Release if new
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.v.outputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1 \
+            || git ls-remote --tags origin "refs/tags/$TAG" | grep -q .; then
+            echo "Tag $TAG already exists — skipping."; exit 0
+          fi
+          gh release create "$TAG" --target "${{ github.sha }}" --title "$TAG" --generate-notes
+          echo "Released $TAG ✓"
