@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Set the project name and version
-project(BusReservationSystem VERSION 1.0)
+# Set the project name and version (read from the VERSION file)
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" APP_VERSION LIMIT_COUNT 1)
+project(BusReservationSystem VERSION ${APP_VERSION})
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)

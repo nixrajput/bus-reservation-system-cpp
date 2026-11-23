@@ -6,7 +6,8 @@ Only the latest release on the `master` branch receives security fixes.
 
 | Version         | Supported |
 | --------------- | --------- |
-| 1.1.x (current) | Yes       |
+| 1.2.x (current) | Yes       |
+| 1.1.x           | No        |
 | 1.0.x           | No        |
 
 ## Reporting a vulnerability

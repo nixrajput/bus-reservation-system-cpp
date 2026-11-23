@@ -94,28 +94,46 @@ To get started with the development or usage of this project, follow the instruc
 
 ### Compilation
 
-To compile the project, you can use the following command in the terminal:
+The sources are in `src/`. `src/main.cpp` includes `Bus.cpp` and `Reservation.cpp`, so compile only `src/main.cpp`. Listing the other `.cpp` files as well causes duplicate-symbol link errors.
 
 ```bash
-g++ -o BusReservationSystem main.cpp Bus.cpp Reservation.cpp
-#or
-clang++ main.cpp -o BusReservationSystem.exe
+mkdir -p build data
+g++ -std=c++11 src/main.cpp -o build/BusReservationSystem
+# or
+clang++ -std=c++11 src/main.cpp -o build/BusReservationSystem
 ```
 
-This command assumes you have `main.cpp`, `Bus.cpp`, and `Reservation.cpp` files. Modify it according to your actual file names.
+Or build and run the smoke test with CMake:
+
+```bash
+cmake -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
 
 ### Running the Application
 
-After successfully compiling the project, you can run the application using the command:
+The app reads and writes its data files in `../data/`, relative to the folder you run it from. Run it from `build/`, with a `data/` folder in the project root:
 
 ```bash
+cd build
 ./BusReservationSystem
 ```
 
 ### Admin Credentials
 
-Username : `admin`
-Password : `pass`
+There is no default admin password. The first time you open the Admin Menu, the app asks you to set a password of at least 8 characters. Later logins ask for that password.
+
+The app stores a random 16-byte salt and a salted SHA-256 hash, repeated 100,000 times, in `data/admin.dat`. It never stores the password itself. On macOS and Linux it creates the file as owner read/write only (`0600`). The login compares hashes in constant time.
+
+This scheme uses only the C++ standard library and a local file, so it has limits:
+
+- Repeated SHA-256 is not a memory-hard function such as Argon2 or scrypt. Anyone who can read `data/admin.dat` can still try weak passwords offline, so choose a long password.
+- Anyone who can write to `data/` can delete `admin.dat` and set a new password. Keep the `data/` folder private.
+- On Windows, the file gets the default permissions of its folder.
+- The password shows on screen as you type it.
+
+To reset a forgotten password, delete `data/admin.dat` and open the Admin Menu again.
 
 ## File Structure
 
@@ -126,6 +144,8 @@ The project directory typically contains the following files:
 - `Reservation.h` and `Reservation.cpp`: Reservation class definition and implementation.
 - `data/`: A directory containing data files for buses and reservations.
 - `utils.h`: A file contains required utility functions.
+- `admin.h`: Admin password hashing and storage.
+- `test/smoke.sh`: A smoke test that drives the app with scripted input.
 
 ## Classes and Methods
 
@@ -148,6 +168,10 @@ This class manages reservations and includes the following methods:
 ### File Handling
 
 Data persistence is achieved using file handling concepts. The bus and reservation data are stored in separate files within the `data/` directory.
+
+Each ticket gets a random 10-character PNR of capital letters and digits, which no saved ticket already uses.
+
+Upgrading from 1.1.x or earlier: tickets saved by an older version still load, but their date shows without its first character, because the PNR field grew by one byte.
 
 ## How to Use
 
