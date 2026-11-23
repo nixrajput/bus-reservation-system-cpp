@@ -10,6 +10,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add the executable
 add_executable(BusReservationSystem src/main.cpp)
 
+if(NOT MSVC)
+  target_compile_options(BusReservationSystem PRIVATE -Wall -Wextra)
+endif()
+
+enable_testing()
+add_test(NAME smoke COMMAND sh ${PROJECT_SOURCE_DIR}/test/smoke.sh $<TARGET_FILE:BusReservationSystem>)
+
 # Include directories if needed
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
