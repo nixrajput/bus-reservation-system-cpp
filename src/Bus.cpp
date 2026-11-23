@@ -65,6 +65,7 @@ void Bus::addBus()
         cout << "\n\t\t\t\t\t\t\t\t\t\tInvalid Bus Fare...!!!\n";
         return;
     }
+    bookedSeats = 0;
 
     busFileStream.open("../data/buses.dat", ios::out | ios::app | ios::binary);
     busFileStream.write((char *)this, sizeof(*this));

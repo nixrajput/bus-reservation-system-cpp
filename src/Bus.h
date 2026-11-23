@@ -76,9 +76,13 @@ public:
         bookedSeats++;
     }
 
-    void setCancelTicket()
+    // Returns false, and leaves the count at 0, if no seat is booked to free.
+    bool setCancelTicket()
     {
+        if (bookedSeats <= 0)
+            return false;
         bookedSeats--;
+        return true;
     }
 
     void setSource(char *s)

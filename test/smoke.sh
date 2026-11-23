@@ -183,6 +183,55 @@ rm -r ../data/temp.dat
 cmp -s ../data/buses.dat "$work/buses.before" || fail "buses.dat changed after a failed save"
 cmp -s ../data/reservations.dat "$work/reservations.before" || fail "reservations.dat changed after a failed save"
 
+# A new bus starts with no booked seats, even after the menu read a bus that has some (B1 has 2).
+run "add a bus after viewing buses" <<'EOF'
+2
+correct horse battery
+2
+1
+B2
+A
+C
+9
+10
+100
+7
+B2
+10
+3
+EOF
+[ "$(count 'Seats Remaining:-> 32')" = 1 ] || fail "a new bus started with booked seats"
+[ "$(count 'Seats Remaining:-> 30')" = 1 ] || fail "B1 should have 2 booked seats"
+
+# Cancelling a ticket on a bus with 0 booked seats keeps the count at 0 and reports the mismatch.
+run "cancel on a bus with no booked seats" <<EOF
+2
+correct horse battery
+9
+B1
+1
+B1
+A
+B
+9
+10
+100
+10
+1
+3
+$pnr
+4
+2
+correct horse battery
+7
+B1
+10
+3
+EOF
+[ "$(count 'had no booked seats to free')" = 1 ] || fail "a seat count mismatch was not reported"
+[ "$(count 'Reservation Cancelled\.\.\.')" = 0 ] || fail "a seat count mismatch was reported as a clean cancel"
+[ "$(count 'Seats Remaining:-> 32')" = 1 ] || fail "a cancel drove the booked seats below 0"
+
 # A reservations.dat saved by 1.1.x is upgraded once, with a backup, and keeps every field.
 mkdir "$work/m" "$work/m/run" "$work/m/data"
 cd "$work/m/run"
