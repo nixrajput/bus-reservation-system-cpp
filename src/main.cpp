@@ -3,6 +3,7 @@
 
 #include "Bus.cpp"
 #include "Reservation.cpp"
+#include "admin.h"
 #include "utils.h"
 
 using namespace std;
@@ -161,30 +162,62 @@ void userMenu()
 // Admin login function
 void adminLogin()
 {
-    string adminUname, adminPass;
+    string password, salt, hash;
+    ifstream adminFileStream(ADMIN_FILE);
 
     system("cls");
 
     printHeading("ADMIN LOGIN");
 
-    cout << "\n\t\t\t\t\t\t\t\t\t\tEnter AdminID:-> ";
-    cin >> adminUname;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    if (!adminFileStream)
+    {
+        string confirm;
+
+        cout << "\n\t\t\t\t\t\t\t\t\t\tNo admin password is set. Set one now (at least 8 characters).\n";
+        cout << "\n\t\t\t\t\t\t\t\t\t\tNew Password:-> ";
+        getline(cin, password);
+        cout << "\n\t\t\t\t\t\t\t\t\t\tConfirm Password:-> ";
+        getline(cin, confirm);
+
+        if (!cin)
+            exit(0);
+
+        if (password.size() < 8 || password != confirm)
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tPasswords must match and have at least 8 characters...!!! ";
+            system("pause");
+            return;
+        }
+
+        if (!saveAdminPassword(password))
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!! ";
+            system("pause");
+            return;
+        }
+
+        adminMenu();
+        return;
+    }
+
+    adminFileStream >> salt >> hash;
+
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Password:-> ";
-    cin >> adminPass;
+    getline(cin, password);
 
     if (!cin)
         exit(0);
 
-    if (adminUname == "admin" && adminPass == "pass")
+    if (salt.empty() || !sameHash(hashPassword(salt, password), hash))
     {
-        adminMenu();
-    }
-    else
-    {
-        cout << "\n\t\t\t\t\t\t\t\t\t\tUsername or Password is wrong...!!! ";
+        cout << "\n\t\t\t\t\t\t\t\t\t\tWrong Password...!!! ";
         system("pause");
-        adminLogin();
+        return;
     }
+
+    adminMenu();
 }
 
 // Admin menu function
