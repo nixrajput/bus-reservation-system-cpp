@@ -94,7 +94,7 @@ void mainMenu()
         default:
             cout << "\n\n\t\t\t\t\t\t\t\t\t\t  Choose valid option!!! \t\t\t\n";
             system("pause");
-            mainMenu();
+            break;
         }
     }
 }
@@ -147,8 +147,7 @@ void userMenu()
 
         case 4:
             system("cls");
-            mainMenu();
-            break;
+            return;
 
         default:
             cout << "\n\t\t\t\t\t  Choose valid option!!! \t\t\t\n";
@@ -277,13 +276,12 @@ void adminMenu()
 
         case 10:
             system("cls");
-            mainMenu();
-            break;
+            return;
 
         default:
             cout << "\n\t\t\t\t\t  Choose valid option!!! \t\t\t\n";
             system("pause");
-            adminMenu();
+            break;
         }
     }
 }
@@ -356,13 +354,12 @@ void reservationsMenu()
 
         case 7:
             system("cls");
-            adminMenu();
-            break;
+            return;
 
         default:
             cout << "\n\t\t\t\t\t  Choose valid option!!! \t\t\t\n";
             system("pause");
-            reservationsMenu();
+            break;
         }
     }
 }

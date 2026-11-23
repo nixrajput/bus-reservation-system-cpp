@@ -61,10 +61,14 @@ B1
 
 250
 2
+6
+7
 10
 3
 EOF
 [ "$(count 'Invalid Bus Fare')" = 2 ] || fail "bad fares were not rejected"
+[ "$(count 'VIEW BOOKINGS')" = 1 ] || fail "bookings menu did not open"
+[ "$(count 'ADMIN PORTAL')" = 7 ] || fail "BACK did not return to the admin menu"
 [ "$(count 'Bus Fare:-> [0-9]')" = 2 ] || fail "expected exactly one saved bus"
 [ "$(count 'Bus Fare:-> 250.00')" = 1 ] || fail "edited fare was not saved as 250.00"
 
