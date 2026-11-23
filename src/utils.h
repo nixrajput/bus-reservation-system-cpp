@@ -8,6 +8,7 @@
 #include <string>
 #include <cstring>
 #include <limits>
+#include <random>
 #include <ctime>
 #include <stddef.h>
 #include <sstream>
@@ -22,15 +23,16 @@ void printHeading(string header)
     cout << "\t\t\t\t\t\t\t\t\t\t==========================================================\n\n";
 }
 
-string generatePNR(int n)
+// 10 characters from 36 symbols give about 52 bits, too many values to guess or enumerate.
+string generatePNR()
 {
-    srand(time(0));
+    static const char symbols[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    random_device rd;
+    uniform_int_distribution<int> pick(0, 35);
 
     string pnr;
-
-    int randomNo = rand() % n;
-
-    pnr = "PNR" + to_string(randomNo);
+    for (int i = 0; i < 10; i++)
+        pnr += symbols[pick(rd)];
 
     return pnr;
 }

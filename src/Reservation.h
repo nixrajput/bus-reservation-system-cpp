@@ -10,7 +10,7 @@
 class Reservation
 {
 private:
-    char name[20], pnrNo[10], date[20];
+    char name[20], pnrNo[11], date[20];
     Bus bus;
 
 public:

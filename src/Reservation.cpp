@@ -14,11 +14,27 @@ using namespace std;
 // Initialie variables in constructor
 Reservation::Reservation() {}
 
+// True if a saved ticket already uses this PNR
+static bool pnrExists(const char *pnr)
+{
+    ifstream reservationsFileStream("../data/reservations.dat", ios::in | ios::binary);
+    Reservation r;
+
+    while (reservationsFileStream.read((char *)&r, sizeof(r)))
+    {
+        if (strcmp(r.getPnrNo(), pnr) == 0)
+            return true;
+    }
+    return false;
+}
+
 // Generate a ticket
 void Reservation::_generateTicket(char *n, Bus b)
 {
     strlcpy(name, n);
-    strlcpy(pnrNo, generatePNR(99999).c_str());
+    do
+        strlcpy(pnrNo, generatePNR().c_str());
+    while (pnrExists(pnrNo));
     strlcpy(date, getCurrentDate().c_str());
     bus = b;
 }
@@ -203,7 +219,7 @@ void Reservation::cancelReservation()
 {
     system("cls");
 
-    char pnr[10];
+    char pnr[11];
     vector<string> cancelledBusNos;
 
     fstream busFileStream, reservationsFileStream, reservationsTempFileStream, busTempFileStream;
@@ -211,7 +227,7 @@ void Reservation::cancelReservation()
     printHeading("CANCEL RESERVATION");
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter PNR Number:-> ";
     cin.ignore();
-    cin.getline(pnr, 10);
+    cin.getline(pnr, 11);
 
     reservationsFileStream.open("../data/reservations.dat", ios::in | ios::binary);
     reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::trunc | ios::binary);
@@ -287,7 +303,7 @@ void Reservation::editReservation()
 {
     system("cls");
 
-    char pnr[10];
+    char pnr[11];
     int chk = 0;
 
     fstream ticketFileStream, reservationsTempFileStream;
@@ -295,7 +311,7 @@ void Reservation::editReservation()
     printHeading("EDIT RESERVATION");
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter PNR Number:-> ";
     cin.ignore();
-    cin.getline(pnr, 10);
+    cin.getline(pnr, 11);
 
     ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
@@ -355,14 +371,14 @@ void Reservation::viewReservationByPNR()
 {
     system("cls");
 
-    char pnr[10];
+    char pnr[11];
     int chk = 0;
     fstream ticketFileStream;
 
     printHeading("SHOW RESERVATIONS BY PNR");
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter PNR Number:-> ";
     cin.ignore();
-    cin.getline(pnr, 10);
+    cin.getline(pnr, 11);
 
     system("cls");
 
