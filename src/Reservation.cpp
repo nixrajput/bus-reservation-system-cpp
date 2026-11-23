@@ -3,6 +3,7 @@
 #include <cstring>
 #include <fstream>
 #include <iomanip>
+#include <vector>
 
 #include "Reservation.h"
 #include "Bus.h"
@@ -105,7 +106,7 @@ void Reservation::bookTicket()
 
             while (!busFileStream.eof())
             {
-                if (strcmp(b.getSource(), from) == 0 && strcmp(b.getDestination(), to) == 0 && strcmp(b.getBusNo(), bNo) == 0)
+                if (booked == 0 && strcmp(b.getSource(), from) == 0 && strcmp(b.getDestination(), to) == 0 && strcmp(b.getBusNo(), bNo) == 0)
                 {
                     if (b.getBookedSeats() >= 32)
                     {
@@ -121,17 +122,9 @@ void Reservation::bookTicket()
                         cin.getline(n, 20);
                         b.setBookedSeats();
                         _generateTicket(n, b);
-
-                        reservationsFileStream.open("../data/reservations.dat", ios::out | ios::app | ios::binary);
-                        reservationsFileStream.write((char *)this, sizeof(*this));
-                        reservationsFileStream.close();
                         busTempFileStream.write((char *)&b, sizeof(b));
 
                         booked = 1;
-                        system("cls");
-                        printHeading("BOOKING DETAILS");
-                        _displayReservationDetails();
-                        cout << "\n\t\t\t\t\t\t\t\t\t\tTicket Booked Successfully...!!\n";
                     }
                 }
                 else
@@ -145,7 +138,28 @@ void Reservation::bookTicket()
             if (booked == 1)
             {
                 busFileStream.close();
-                replaceDataFile(busTempFileStream, "../data/temp.dat", "../data/buses.dat");
+
+                // Save the seat first: if the ticket write then fails, the bus is short a seat, never overbooked.
+                bool saved = replaceDataFile(busTempFileStream, "../data/temp.dat", "../data/buses.dat");
+                if (saved)
+                {
+                    reservationsFileStream.open("../data/reservations.dat", ios::out | ios::app | ios::binary);
+                    reservationsFileStream.write((char *)this, sizeof(*this));
+                    reservationsFileStream.close();
+                    saved = !reservationsFileStream.fail();
+                }
+
+                if (!saved)
+                {
+                    cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!\n";
+                }
+                else
+                {
+                    system("cls");
+                    printHeading("BOOKING DETAILS");
+                    _displayReservationDetails();
+                    cout << "\n\t\t\t\t\t\t\t\t\t\tTicket Booked Successfully...!!\n";
+                }
             }
         }
 
@@ -190,7 +204,7 @@ void Reservation::cancelReservation()
     system("cls");
 
     char pnr[10];
-    int chk = 0;
+    vector<string> cancelledBusNos;
 
     fstream busFileStream, reservationsFileStream, reservationsTempFileStream, busTempFileStream;
 
@@ -218,43 +232,52 @@ void Reservation::cancelReservation()
             }
             else
             {
-                Bus b;
-                busFileStream.open("../data/buses.dat", ios::in | ios::binary);
-                busTempFileStream.open("../data/bustemp.dat", ios::out | ios::trunc | ios::binary);
-
-                busFileStream.read((char *)&b, sizeof(b));
-
-                while (!busFileStream.eof())
-                {
-                    if (strcmp(b.getBusNo(), bus.getBusNo()) == 0)
-                    {
-                        b.setCancelTicket();
-                        busTempFileStream.write((char *)&b, sizeof(b));
-                    }
-                    else
-                    {
-                        busTempFileStream.write((char *)&b, sizeof(b));
-                    }
-
-                    busFileStream.read((char *)&b, sizeof(b));
-                }
-                busFileStream.close();
-                replaceDataFile(busTempFileStream, "../data/bustemp.dat", "../data/buses.dat");
-                chk = 1;
+                cancelledBusNos.push_back(bus.getBusNo());
             }
             reservationsFileStream.read((char *)this, sizeof(*this));
         }
-        if (chk == 0)
+        reservationsFileStream.close();
+
+        if (cancelledBusNos.empty())
         {
-            reservationsFileStream.close();
             reservationsTempFileStream.close();
             cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Not Found...!!\n";
         }
+        // Remove the ticket first: if the seat update then fails, the bus is short a seat, never overbooked.
+        else if (!replaceDataFile(reservationsTempFileStream, "../data/temp.dat", "../data/reservations.dat"))
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!\n";
+        }
         else
         {
-            reservationsFileStream.close();
-            replaceDataFile(reservationsTempFileStream, "../data/temp.dat", "../data/reservations.dat");
-            cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled...!!\n";
+            Bus b;
+            busFileStream.open("../data/buses.dat", ios::in | ios::binary);
+            busTempFileStream.open("../data/bustemp.dat", ios::out | ios::trunc | ios::binary);
+
+            busFileStream.read((char *)&b, sizeof(b));
+
+            while (!busFileStream.eof())
+            {
+                for (size_t i = 0; i < cancelledBusNos.size(); i++)
+                {
+                    if (cancelledBusNos[i] == b.getBusNo())
+                        b.setCancelTicket();
+                }
+                busTempFileStream.write((char *)&b, sizeof(b));
+                busFileStream.read((char *)&b, sizeof(b));
+            }
+
+            bool busesRead = busFileStream.is_open();
+            busFileStream.close();
+
+            if (busesRead && replaceDataFile(busTempFileStream, "../data/bustemp.dat", "../data/buses.dat"))
+            {
+                cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled...!!\n";
+            }
+            else
+            {
+                cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled, but the seat count was not updated...!!\n";
+            }
         }
     }
 }
@@ -310,7 +333,13 @@ void Reservation::editReservation()
             ticketFileStream.read((char *)this, sizeof(*this));
         }
 
-        if (chk == 1)
+        ticketFileStream.close();
+
+        if (!replaceDataFile(reservationsTempFileStream, "../data/temp.dat", "../data/reservations.dat"))
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!\n";
+        }
+        else if (chk == 1)
         {
             cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Updated Successfully...!!\n";
         }
@@ -318,9 +347,6 @@ void Reservation::editReservation()
         {
             cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Not Found...!!\n";
         }
-
-        ticketFileStream.close();
-        replaceDataFile(reservationsTempFileStream, "../data/temp.dat", "../data/reservations.dat");
     }
 }
 

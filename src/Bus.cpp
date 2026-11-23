@@ -189,8 +189,11 @@ void Bus::editBus()
                 cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Destination Time:-> ";
                 cin.getline(dTime, 20);
                 cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Bus Fare:-> ";
-                if (!readNumber(fare))
+                if (!readNumber(fare) || !(fare > 0))
+                {
+                    cout << "\n\t\t\t\t\t\t\t\t\t\tInvalid Bus Fare, keeping the old fare...!!\n";
                     fare = 0;
+                }
                 setSource(s);
                 setDestination(d);
                 setSourceTime(sTime);
@@ -208,7 +211,13 @@ void Bus::editBus()
             busFileStream.read((char *)this, sizeof(*this));
         }
 
-        if (chk == 1)
+        busFileStream.close();
+
+        if (!replaceDataFile(tempFileStream, "../data/temp.dat", "../data/buses.dat"))
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!\n";
+        }
+        else if (chk == 1)
         {
             cout << "\n\t\t\t\t\t\t\t\t\t\tBus Updated Successfully...!!\n";
         }
@@ -216,9 +225,6 @@ void Bus::editBus()
         {
             cout << "\n\t\t\t\t\t\t\t\t\t\tBus Not Found...!!\n";
         }
-
-        busFileStream.close();
-        replaceDataFile(tempFileStream, "../data/temp.dat", "../data/buses.dat");
     }
 }
 
@@ -261,7 +267,13 @@ void Bus::removeBus()
             busFileStream.read((char *)this, sizeof(*this));
         }
 
-        if (chk == 0)
+        busFileStream.close();
+
+        if (!replaceDataFile(tempFileStream, "../data/temp.dat", "../data/buses.dat"))
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!\n";
+        }
+        else if (chk == 0)
         {
             cout << "\n\t\t\t\t\t\t\t\t\t\tBus Not Found...!!\n";
         }
@@ -269,8 +281,5 @@ void Bus::removeBus()
         {
             cout << "\n\t\t\t\t\t\t\t\t\t\tBus Deleted...!!\n";
         }
-
-        busFileStream.close();
-        replaceDataFile(tempFileStream, "../data/temp.dat", "../data/buses.dat");
     }
 }

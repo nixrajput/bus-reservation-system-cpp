@@ -85,17 +85,20 @@ bool readNumber(T &value)
 }
 
 // Swaps the rewritten temp file in only if every write to it succeeded,
-// so a failed open or write never deletes the data file.
-void replaceDataFile(fstream &temp, const char *tempPath, const char *dataPath)
+// so a failed open or write never deletes the data file. Returns false if the data file was not replaced.
+bool replaceDataFile(fstream &temp, const char *tempPath, const char *dataPath)
 {
     temp.close();
     if (temp.fail())
     {
         remove(tempPath);
-        return;
+        return false;
     }
+    // POSIX rename replaces dataPath atomically. Windows refuses an existing target, so remove it and retry.
+    if (rename(tempPath, dataPath) == 0)
+        return true;
     remove(dataPath);
-    rename(tempPath, dataPath);
+    return rename(tempPath, dataPath) == 0;
 }
 
 #endif // UTILS_H
