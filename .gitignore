@@ -35,3 +35,15 @@ out/
 *.app
 *.dat
 *.exe
+
+# Secrets, keys and local databases
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.db
+*.sqlite
+*.sqlite3
