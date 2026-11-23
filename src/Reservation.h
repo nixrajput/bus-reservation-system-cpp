@@ -29,6 +29,7 @@ public:
     void viewReservationsByBusNo();
     void viewReservationsBySource();
     void viewReservationsByDestination();
+    static bool migrateOldFile();
 
     // Getters
     char *getName()

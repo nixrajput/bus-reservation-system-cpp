@@ -3,6 +3,7 @@
 #include <cstring>
 #include <fstream>
 #include <iomanip>
+#include <iterator>
 #include <vector>
 
 #include "Reservation.h"
@@ -13,6 +14,81 @@ using namespace std;
 
 // Initialie variables in constructor
 Reservation::Reservation() {}
+
+// Ticket layout written by 1.1.x and earlier, when the PNR field was 10 bytes
+struct OldReservation
+{
+    char name[20], pnrNo[10], date[20];
+    Bus bus;
+};
+
+static_assert(sizeof(OldReservation) == sizeof(Reservation), "old and new tickets must have the same size");
+
+static bool migrationFailed(const char *reason)
+{
+    cout << "\n\t\t\t\t\t\t\t\t\t\tCan't upgrade data/reservations.dat to the 1.2 format: " << reason << ". The file was not changed.\n";
+    system("pause");
+    return false;
+}
+
+// Converts a reservations.dat saved by 1.1.x or earlier to the 11-byte PNR layout, once.
+// Both layouts have the same record size, so the content decides: the byte after the 10th PNR character
+// is always NUL in the new layout, and in the old layout it is the date's first digit, never NUL.
+bool Reservation::migrateOldFile()
+{
+    const char *dataPath = "../data/reservations.dat";
+    ifstream reservationsFileStream(dataPath, ios::in | ios::binary);
+
+    if (!reservationsFileStream)
+        return true; // no tickets saved yet
+
+    string bytes((istreambuf_iterator<char>(reservationsFileStream)), istreambuf_iterator<char>());
+    if (reservationsFileStream.bad())
+        return migrationFailed("it could not be read");
+    reservationsFileStream.close();
+
+    if (bytes.size() % sizeof(OldReservation) != 0)
+        return migrationFailed("its size is not a whole number of tickets");
+
+    size_t count = bytes.size() / sizeof(OldReservation), oldCount = 0;
+    vector<OldReservation> oldTickets(count);
+    for (size_t i = 0; i < count; i++)
+    {
+        memcpy((char *)&oldTickets[i], bytes.data() + i * sizeof(OldReservation), sizeof(OldReservation));
+        if (oldTickets[i].date[0] != '\0')
+            oldCount++;
+    }
+
+    if (oldCount == 0)
+        return true; // already the new layout
+    if (oldCount != count)
+        return migrationFailed("it mixes old and new tickets");
+
+    ofstream backupFileStream("../data/reservations.dat.bak", ios::out | ios::trunc | ios::binary);
+    backupFileStream.write(bytes.data(), bytes.size());
+    backupFileStream.close();
+    if (backupFileStream.fail())
+        return migrationFailed("the backup data/reservations.dat.bak could not be written");
+
+    fstream tempFileStream("../data/temp.dat", ios::out | ios::trunc | ios::binary);
+    for (size_t i = 0; i < count; i++)
+    {
+        Reservation r;
+        memcpy(r.name, oldTickets[i].name, sizeof(r.name));
+        memset(r.pnrNo, 0, sizeof(r.pnrNo));
+        memcpy(r.pnrNo, oldTickets[i].pnrNo, sizeof(oldTickets[i].pnrNo));
+        memcpy(r.date, oldTickets[i].date, sizeof(r.date));
+        r.bus = oldTickets[i].bus;
+        tempFileStream.write((char *)&r, sizeof(r));
+    }
+
+    if (!replaceDataFile(tempFileStream, "../data/temp.dat", dataPath))
+        return migrationFailed("the new file could not be written");
+
+    cout << "\n\t\t\t\t\t\t\t\t\t\tUpgraded data/reservations.dat to the 1.2 format. The original is in data/reservations.dat.bak.\n";
+    system("pause");
+    return true;
+}
 
 // True if a saved ticket already uses this PNR
 static bool pnrExists(const char *pnr)

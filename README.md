@@ -171,7 +171,7 @@ Data persistence is achieved using file handling concepts. The bus and reservati
 
 Each ticket gets a random 10-character PNR of capital letters and digits, which no saved ticket already uses.
 
-Upgrading from 1.1.x or earlier: tickets saved by an older version still load, but their date shows without its first character, because the PNR field grew by one byte.
+Upgrading from 1.1.x or earlier: 1.2.0 stores the PNR in a longer field. On its first start, the app converts `data/reservations.dat` to the new ticket layout and keeps the original file as `data/reservations.dat.bak`. If the conversion fails, the app reports the error and stops, and it leaves the original file unchanged.
 
 ## How to Use
 

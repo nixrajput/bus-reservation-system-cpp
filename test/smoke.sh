@@ -21,6 +21,28 @@ count() {
     grep -c "$1" "$work/out.txt" || true
 }
 
+# Prints text padded with NUL bytes to a fixed width: field <text> <width>
+field() {
+    printf '%s' "$1"
+    head -c $(($2 - ${#1})) /dev/zero
+}
+
+# Prints one ticket in the 1.1.x layout (10-byte PNR field), little-endian, 168 bytes.
+old_ticket() {
+    field Dana 20
+    field PNR12345 10
+    field 5-11-2025 20
+    head -c 6 /dev/zero                         # padding before the Bus
+    printf '\040\000\000\000\001\000\000\000' # maxSeats 32, bookedSeats 1
+    printf '\000\000\000\000\000\000\131\100' # busFare 100.0
+    field B1 10
+    field A 20
+    field B 20
+    field 9 20
+    field 10 20
+    head -c 6 /dev/zero # padding after the Bus
+}
+
 # Non-numeric menu input and end of input must exit, not loop forever.
 run "non-numeric input or end of input" <<'EOF'
 x
@@ -160,5 +182,43 @@ rm -r ../data/temp.dat
 [ "$(count "Can't Save Changes")" = 2 ] || fail "failed saves were not reported"
 cmp -s ../data/buses.dat "$work/buses.before" || fail "buses.dat changed after a failed save"
 cmp -s ../data/reservations.dat "$work/reservations.before" || fail "reservations.dat changed after a failed save"
+
+# A reservations.dat saved by 1.1.x is upgraded once, with a backup, and keeps every field.
+mkdir "$work/m" "$work/m/run" "$work/m/data"
+cd "$work/m/run"
+old_ticket >../data/reservations.dat
+cp ../data/reservations.dat "$work/m/original.dat"
+run "upgrade old tickets" <<'EOF'
+1
+2
+PNR12345
+4
+3
+EOF
+[ "$(count 'Upgraded data/reservations.dat')" = 1 ] || fail "old tickets were not upgraded"
+for want in 'Name:-> Dana' 'PNR No:-> PNR12345' 'Bus No:-> B1' 'Seat No.:-> 1' 'Date:-> 5-11-2025' 'From:-> A' 'Bus Fare:-> 100.00'; do
+    [ "$(count "$want")" = 1 ] || fail "the upgraded ticket lost '$want'"
+done
+cmp -s ../data/reservations.dat.bak "$work/m/original.dat" || fail "reservations.dat.bak is not the original file"
+
+run "start after the upgrade" <<'EOF'
+1
+2
+PNR12345
+4
+3
+EOF
+[ "$(count 'Upgraded')" = 0 ] || fail "an upgraded file was upgraded again"
+[ "$(count 'Date:-> 5-11-2025')" = 1 ] || fail "the second start changed the upgraded ticket"
+
+# If the upgrade cannot write its temp file, the app stops and leaves the original file unchanged.
+old_ticket >../data/reservations.dat
+mkdir -p ../data/temp.dat/blocked
+status=0
+timeout 20 "$bin" </dev/null >"$work/out.txt" 2>/dev/null || status=$?
+rm -r ../data/temp.dat
+[ "$status" = 1 ] || fail "a failed upgrade should exit 1, got $status"
+[ "$(count "Can't upgrade data/reservations.dat")" = 1 ] || fail "a failed upgrade was not reported"
+cmp -s ../data/reservations.dat "$work/m/original.dat" || fail "a failed upgrade changed reservations.dat"
 
 echo "smoke: all checks passed"

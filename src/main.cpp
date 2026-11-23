@@ -22,6 +22,9 @@ int main()
     system("cls");
     system("COLOR 03");
 
+    if (!Reservation::migrateOldFile())
+        return 1;
+
     welcomeScreen();
 
     return 0;
