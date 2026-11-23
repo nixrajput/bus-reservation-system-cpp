@@ -3,6 +3,8 @@
 #include <cstring>
 #include <fstream>
 #include <iomanip>
+#include <iterator>
+#include <vector>
 
 #include "Reservation.h"
 #include "Bus.h"
@@ -13,11 +15,102 @@ using namespace std;
 // Initialie variables in constructor
 Reservation::Reservation() {}
 
+// Ticket layout written by 1.1.x and earlier, when the PNR field was 10 bytes
+struct OldReservation
+{
+    char name[20], pnrNo[10], date[20];
+    Bus bus;
+};
+
+static_assert(sizeof(OldReservation) == sizeof(Reservation), "old and new tickets must have the same size");
+
+static bool migrationFailed(const char *reason)
+{
+    cout << "\n\t\t\t\t\t\t\t\t\t\tCan't upgrade data/reservations.dat to the 1.2 format: " << reason << ". The file was not changed.\n";
+    system("pause");
+    return false;
+}
+
+// Converts a reservations.dat saved by 1.1.x or earlier to the 11-byte PNR layout, once.
+// Both layouts have the same record size, so the content decides: the byte after the 10th PNR character
+// is always NUL in the new layout, and in the old layout it is the date's first digit, never NUL.
+bool Reservation::migrateOldFile()
+{
+    const char *dataPath = "../data/reservations.dat";
+    ifstream reservationsFileStream(dataPath, ios::in | ios::binary);
+
+    if (!reservationsFileStream)
+        return true; // no tickets saved yet
+
+    string bytes((istreambuf_iterator<char>(reservationsFileStream)), istreambuf_iterator<char>());
+    if (reservationsFileStream.bad())
+        return migrationFailed("it could not be read");
+    reservationsFileStream.close();
+
+    if (bytes.size() % sizeof(OldReservation) != 0)
+        return migrationFailed("its size is not a whole number of tickets");
+
+    size_t count = bytes.size() / sizeof(OldReservation), oldCount = 0;
+    vector<OldReservation> oldTickets(count);
+    for (size_t i = 0; i < count; i++)
+    {
+        memcpy((char *)&oldTickets[i], bytes.data() + i * sizeof(OldReservation), sizeof(OldReservation));
+        if (oldTickets[i].date[0] != '\0')
+            oldCount++;
+    }
+
+    if (oldCount == 0)
+        return true; // already the new layout
+    if (oldCount != count)
+        return migrationFailed("it mixes old and new tickets");
+
+    ofstream backupFileStream("../data/reservations.dat.bak", ios::out | ios::trunc | ios::binary);
+    backupFileStream.write(bytes.data(), bytes.size());
+    backupFileStream.close();
+    if (backupFileStream.fail())
+        return migrationFailed("the backup data/reservations.dat.bak could not be written");
+
+    fstream tempFileStream("../data/temp.dat", ios::out | ios::trunc | ios::binary);
+    for (size_t i = 0; i < count; i++)
+    {
+        Reservation r;
+        memcpy(r.name, oldTickets[i].name, sizeof(r.name));
+        memset(r.pnrNo, 0, sizeof(r.pnrNo));
+        memcpy(r.pnrNo, oldTickets[i].pnrNo, sizeof(oldTickets[i].pnrNo));
+        memcpy(r.date, oldTickets[i].date, sizeof(r.date));
+        r.bus = oldTickets[i].bus;
+        tempFileStream.write((char *)&r, sizeof(r));
+    }
+
+    if (!replaceDataFile(tempFileStream, "../data/temp.dat", dataPath))
+        return migrationFailed("the new file could not be written");
+
+    cout << "\n\t\t\t\t\t\t\t\t\t\tUpgraded data/reservations.dat to the 1.2 format. The original is in data/reservations.dat.bak.\n";
+    system("pause");
+    return true;
+}
+
+// True if a saved ticket already uses this PNR
+static bool pnrExists(const char *pnr)
+{
+    ifstream reservationsFileStream("../data/reservations.dat", ios::in | ios::binary);
+    Reservation r;
+
+    while (reservationsFileStream.read((char *)&r, sizeof(r)))
+    {
+        if (strcmp(r.getPnrNo(), pnr) == 0)
+            return true;
+    }
+    return false;
+}
+
 // Generate a ticket
 void Reservation::_generateTicket(char *n, Bus b)
 {
     strlcpy(name, n);
-    strlcpy(pnrNo, generatePNR(99999).c_str());
+    do
+        strlcpy(pnrNo, generatePNR().c_str());
+    while (pnrExists(pnrNo));
     strlcpy(date, getCurrentDate().c_str());
     bus = b;
 }
@@ -54,7 +147,7 @@ void Reservation::bookTicket()
 
     printHeading("BOOK TICKET");
 
-    busFileStream.open("../data/buses.dat", ios::in | ios::app | ios::binary);
+    busFileStream.open("../data/buses.dat", ios::in | ios::binary);
 
     if (busFileStream.fail())
     {
@@ -98,14 +191,14 @@ void Reservation::bookTicket()
             cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Bus Number:-> ";
             cin.getline(bNo, 10);
 
-            busFileStream.open("../data/buses.dat", ios::in | ios::app | ios::binary);
-            busTempFileStream.open("../data/temp.dat", ios::out | ios::app | ios::binary);
+            busFileStream.open("../data/buses.dat", ios::in | ios::binary);
+            busTempFileStream.open("../data/temp.dat", ios::out | ios::trunc | ios::binary);
 
             busFileStream.read((char *)&b, sizeof(b));
 
             while (!busFileStream.eof())
             {
-                if (strcmp(b.getSource(), from) == 0 && strcmp(b.getDestination(), to) == 0 && strcmp(b.getBusNo(), bNo) == 0)
+                if (booked == 0 && strcmp(b.getSource(), from) == 0 && strcmp(b.getDestination(), to) == 0 && strcmp(b.getBusNo(), bNo) == 0)
                 {
                     if (b.getBookedSeats() >= 32)
                     {
@@ -121,17 +214,9 @@ void Reservation::bookTicket()
                         cin.getline(n, 20);
                         b.setBookedSeats();
                         _generateTicket(n, b);
-
-                        reservationsFileStream.open("../data/reservations.dat", ios::out | ios::app | ios::binary);
-                        reservationsFileStream.write((char *)this, sizeof(*this));
-                        reservationsFileStream.close();
                         busTempFileStream.write((char *)&b, sizeof(b));
 
                         booked = 1;
-                        system("cls");
-                        printHeading("BOOKING DETAILS");
-                        _displayReservationDetails();
-                        cout << "\n\t\t\t\t\t\t\t\t\t\tTicket Booked Successfully...!!\n";
                     }
                 }
                 else
@@ -145,9 +230,28 @@ void Reservation::bookTicket()
             if (booked == 1)
             {
                 busFileStream.close();
-                busTempFileStream.close();
-                remove("../data/buses.dat");
-                rename("../data/temp.dat", "../data/buses.dat");
+
+                // Save the seat first: if the ticket write then fails, the bus is short a seat, never overbooked.
+                bool saved = replaceDataFile(busTempFileStream, "../data/temp.dat", "../data/buses.dat");
+                if (saved)
+                {
+                    reservationsFileStream.open("../data/reservations.dat", ios::out | ios::app | ios::binary);
+                    reservationsFileStream.write((char *)this, sizeof(*this));
+                    reservationsFileStream.close();
+                    saved = !reservationsFileStream.fail();
+                }
+
+                if (!saved)
+                {
+                    cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!\n";
+                }
+                else
+                {
+                    system("cls");
+                    printHeading("BOOKING DETAILS");
+                    _displayReservationDetails();
+                    cout << "\n\t\t\t\t\t\t\t\t\t\tTicket Booked Successfully...!!\n";
+                }
             }
         }
 
@@ -166,7 +270,7 @@ void Reservation::viewReservations()
 
     printHeading("RESERVATIONS");
 
-    reservationsFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    reservationsFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (reservationsFileStream.fail())
     {
@@ -191,18 +295,18 @@ void Reservation::cancelReservation()
 {
     system("cls");
 
-    char pnr[10];
-    int chk = 0;
+    char pnr[11];
+    vector<string> cancelledBusNos;
 
     fstream busFileStream, reservationsFileStream, reservationsTempFileStream, busTempFileStream;
 
     printHeading("CANCEL RESERVATION");
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter PNR Number:-> ";
     cin.ignore();
-    cin.getline(pnr, 10);
+    cin.getline(pnr, 11);
 
-    reservationsFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
-    reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::app | ios::binary);
+    reservationsFileStream.open("../data/reservations.dat", ios::in | ios::binary);
+    reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::trunc | ios::binary);
 
     if (reservationsFileStream.fail())
     {
@@ -220,47 +324,52 @@ void Reservation::cancelReservation()
             }
             else
             {
-                Bus b;
-                busFileStream.open("../data/buses.dat", ios::in | ios::app | ios::binary);
-                busTempFileStream.open("../data/bustemp.dat", ios::out | ios::app | ios::binary);
-
-                busFileStream.read((char *)&b, sizeof(b));
-
-                while (!busFileStream.eof())
-                {
-                    if (strcmp(b.getBusNo(), bus.getBusNo()) == 0)
-                    {
-                        b.setCancelTicket();
-                        busTempFileStream.write((char *)&b, sizeof(b));
-                    }
-                    else
-                    {
-                        busTempFileStream.write((char *)&b, sizeof(b));
-                    }
-
-                    busFileStream.read((char *)&b, sizeof(b));
-                }
-                busFileStream.close();
-                busTempFileStream.close();
-                remove("../data/buses.dat");
-                rename("../data/bustemp.dat", "../data/buses.dat");
-                chk = 1;
+                cancelledBusNos.push_back(bus.getBusNo());
             }
             reservationsFileStream.read((char *)this, sizeof(*this));
         }
-        if (chk == 0)
+        reservationsFileStream.close();
+
+        if (cancelledBusNos.empty())
         {
-            reservationsFileStream.close();
             reservationsTempFileStream.close();
             cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Not Found...!!\n";
         }
+        // Remove the ticket first: if the seat update then fails, the bus is short a seat, never overbooked.
+        else if (!replaceDataFile(reservationsTempFileStream, "../data/temp.dat", "../data/reservations.dat"))
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!\n";
+        }
         else
         {
-            reservationsFileStream.close();
-            reservationsTempFileStream.close();
-            remove("../data/reservations.dat");
-            rename("../data/temp.dat", "../data/reservations.dat");
-            cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled...!!\n";
+            Bus b;
+            busFileStream.open("../data/buses.dat", ios::in | ios::binary);
+            busTempFileStream.open("../data/bustemp.dat", ios::out | ios::trunc | ios::binary);
+
+            busFileStream.read((char *)&b, sizeof(b));
+
+            while (!busFileStream.eof())
+            {
+                for (size_t i = 0; i < cancelledBusNos.size(); i++)
+                {
+                    if (cancelledBusNos[i] == b.getBusNo())
+                        b.setCancelTicket();
+                }
+                busTempFileStream.write((char *)&b, sizeof(b));
+                busFileStream.read((char *)&b, sizeof(b));
+            }
+
+            bool busesRead = busFileStream.is_open();
+            busFileStream.close();
+
+            if (busesRead && replaceDataFile(busTempFileStream, "../data/bustemp.dat", "../data/buses.dat"))
+            {
+                cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled...!!\n";
+            }
+            else
+            {
+                cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled, but the seat count was not updated...!!\n";
+            }
         }
     }
 }
@@ -270,7 +379,7 @@ void Reservation::editReservation()
 {
     system("cls");
 
-    char pnr[10];
+    char pnr[11];
     int chk = 0;
 
     fstream ticketFileStream, reservationsTempFileStream;
@@ -278,9 +387,9 @@ void Reservation::editReservation()
     printHeading("EDIT RESERVATION");
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter PNR Number:-> ";
     cin.ignore();
-    cin.getline(pnr, 10);
+    cin.getline(pnr, 11);
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -288,7 +397,7 @@ void Reservation::editReservation()
     }
     else
     {
-        reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::app | ios::binary);
+        reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::trunc | ios::binary);
 
         ticketFileStream.read((char *)this, sizeof(*this));
 
@@ -316,7 +425,13 @@ void Reservation::editReservation()
             ticketFileStream.read((char *)this, sizeof(*this));
         }
 
-        if (chk == 1)
+        ticketFileStream.close();
+
+        if (!replaceDataFile(reservationsTempFileStream, "../data/temp.dat", "../data/reservations.dat"))
+        {
+            cout << "\n\t\t\t\t\t\t\t\t\t\tCan't Save Changes...!!\n";
+        }
+        else if (chk == 1)
         {
             cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Updated Successfully...!!\n";
         }
@@ -324,11 +439,6 @@ void Reservation::editReservation()
         {
             cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Not Found...!!\n";
         }
-
-        ticketFileStream.close();
-        reservationsTempFileStream.close();
-        remove("../data/reservations.dat");
-        rename("../data/temp.dat", "../data/reservations.dat");
     }
 }
 
@@ -337,20 +447,20 @@ void Reservation::viewReservationByPNR()
 {
     system("cls");
 
-    char pnr[10];
+    char pnr[11];
     int chk = 0;
     fstream ticketFileStream;
 
     printHeading("SHOW RESERVATIONS BY PNR");
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter PNR Number:-> ";
     cin.ignore();
-    cin.getline(pnr, 10);
+    cin.getline(pnr, 11);
 
     system("cls");
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -397,7 +507,7 @@ void Reservation::viewReservationsByName()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -444,7 +554,7 @@ void Reservation::viewReservationsByBusNo()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -491,7 +601,7 @@ void Reservation::viewReservationsBySource()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -538,7 +648,7 @@ void Reservation::viewReservationsByDestination()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
