@@ -343,6 +343,7 @@ void Reservation::cancelReservation()
         else
         {
             Bus b;
+            bool seatsMatch = true;
             busFileStream.open("../data/buses.dat", ios::in | ios::binary);
             busTempFileStream.open("../data/bustemp.dat", ios::out | ios::trunc | ios::binary);
 
@@ -352,8 +353,8 @@ void Reservation::cancelReservation()
             {
                 for (size_t i = 0; i < cancelledBusNos.size(); i++)
                 {
-                    if (cancelledBusNos[i] == b.getBusNo())
-                        b.setCancelTicket();
+                    if (cancelledBusNos[i] == b.getBusNo() && !b.setCancelTicket())
+                        seatsMatch = false;
                 }
                 busTempFileStream.write((char *)&b, sizeof(b));
                 busFileStream.read((char *)&b, sizeof(b));
@@ -364,7 +365,10 @@ void Reservation::cancelReservation()
 
             if (busesRead && replaceDataFile(busTempFileStream, "../data/bustemp.dat", "../data/buses.dat"))
             {
-                cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled...!!\n";
+                if (seatsMatch)
+                    cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled...!!\n";
+                else
+                    cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled, but its bus had no booked seats to free. Check the bus seat count...!!\n";
             }
             else
             {
