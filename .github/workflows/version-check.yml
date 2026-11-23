@@ -15,18 +15,20 @@ jobs:
     name: version bumped
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0 # need the base branch to diff the version
           persist-credentials: false
       - name: Read versions
         id: v
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          git fetch --no-tags --depth=1 origin "${{ github.base_ref }}"
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
           pr=$(tr -d ' \r\n' < VERSION)
           # If VERSION doesn't exist on the base yet (the PR that introduces it),
           # treat the base as 0.0.0 so any real version passes the bump check.
-          base=$(git show "origin/${{ github.base_ref }}:VERSION" 2>/dev/null | tr -d ' \r\n' || true)
+          base=$(git show "origin/$BASE_REF:VERSION" 2>/dev/null | tr -d ' \r\n' || true)
           base=${base:-0.0.0}
           echo "pr=$pr" >> "$GITHUB_OUTPUT"
           echo "base=$base" >> "$GITHUB_OUTPUT"
