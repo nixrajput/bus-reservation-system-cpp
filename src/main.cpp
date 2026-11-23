@@ -72,7 +72,8 @@ void mainMenu()
 
         cout << "\n\t\t\t\t\t\t\t\t\t\tEnter your choice:-> ";
 
-        cin >> choice;
+        if (!readNumber(choice))
+            choice = 0;
 
         switch (choice)
         {
@@ -124,7 +125,8 @@ void userMenu()
 
         cout << "\n\t\t\t\t\t\t\t\t\t\tEnter your choice:-> ";
 
-        cin >> choice;
+        if (!readNumber(choice))
+            choice = 0;
 
         switch (choice)
         {
@@ -170,6 +172,9 @@ void adminLogin()
     cin >> adminUname;
     cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Password:-> ";
     cin >> adminPass;
+
+    if (!cin)
+        exit(0);
 
     if (adminUname == "admin" && adminPass == "pass")
     {
@@ -221,7 +226,8 @@ void adminMenu()
 
         cout << "\n\t\t\t\t\t\t\t\t\t\tEnter your choice:-> ";
 
-        cin >> choice;
+        if (!readNumber(choice))
+            choice = 0;
 
         switch (choice)
         {
@@ -313,7 +319,8 @@ void reservationsMenu()
 
         cout << "\n\t\t\t\t\t\t\t\t\t\tEnter your choice:-> ";
 
-        cin >> choice;
+        if (!readNumber(choice))
+            choice = 0;
 
         switch (choice)
         {

@@ -54,7 +54,7 @@ void Reservation::bookTicket()
 
     printHeading("BOOK TICKET");
 
-    busFileStream.open("../data/buses.dat", ios::in | ios::app | ios::binary);
+    busFileStream.open("../data/buses.dat", ios::in | ios::binary);
 
     if (busFileStream.fail())
     {
@@ -98,8 +98,8 @@ void Reservation::bookTicket()
             cout << "\n\t\t\t\t\t\t\t\t\t\tEnter Bus Number:-> ";
             cin.getline(bNo, 10);
 
-            busFileStream.open("../data/buses.dat", ios::in | ios::app | ios::binary);
-            busTempFileStream.open("../data/temp.dat", ios::out | ios::app | ios::binary);
+            busFileStream.open("../data/buses.dat", ios::in | ios::binary);
+            busTempFileStream.open("../data/temp.dat", ios::out | ios::trunc | ios::binary);
 
             busFileStream.read((char *)&b, sizeof(b));
 
@@ -145,9 +145,7 @@ void Reservation::bookTicket()
             if (booked == 1)
             {
                 busFileStream.close();
-                busTempFileStream.close();
-                remove("../data/buses.dat");
-                rename("../data/temp.dat", "../data/buses.dat");
+                replaceDataFile(busTempFileStream, "../data/temp.dat", "../data/buses.dat");
             }
         }
 
@@ -166,7 +164,7 @@ void Reservation::viewReservations()
 
     printHeading("RESERVATIONS");
 
-    reservationsFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    reservationsFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (reservationsFileStream.fail())
     {
@@ -201,8 +199,8 @@ void Reservation::cancelReservation()
     cin.ignore();
     cin.getline(pnr, 10);
 
-    reservationsFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
-    reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::app | ios::binary);
+    reservationsFileStream.open("../data/reservations.dat", ios::in | ios::binary);
+    reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::trunc | ios::binary);
 
     if (reservationsFileStream.fail())
     {
@@ -221,8 +219,8 @@ void Reservation::cancelReservation()
             else
             {
                 Bus b;
-                busFileStream.open("../data/buses.dat", ios::in | ios::app | ios::binary);
-                busTempFileStream.open("../data/bustemp.dat", ios::out | ios::app | ios::binary);
+                busFileStream.open("../data/buses.dat", ios::in | ios::binary);
+                busTempFileStream.open("../data/bustemp.dat", ios::out | ios::trunc | ios::binary);
 
                 busFileStream.read((char *)&b, sizeof(b));
 
@@ -241,9 +239,7 @@ void Reservation::cancelReservation()
                     busFileStream.read((char *)&b, sizeof(b));
                 }
                 busFileStream.close();
-                busTempFileStream.close();
-                remove("../data/buses.dat");
-                rename("../data/bustemp.dat", "../data/buses.dat");
+                replaceDataFile(busTempFileStream, "../data/bustemp.dat", "../data/buses.dat");
                 chk = 1;
             }
             reservationsFileStream.read((char *)this, sizeof(*this));
@@ -257,9 +253,7 @@ void Reservation::cancelReservation()
         else
         {
             reservationsFileStream.close();
-            reservationsTempFileStream.close();
-            remove("../data/reservations.dat");
-            rename("../data/temp.dat", "../data/reservations.dat");
+            replaceDataFile(reservationsTempFileStream, "../data/temp.dat", "../data/reservations.dat");
             cout << "\n\t\t\t\t\t\t\t\t\t\tReservation Cancelled...!!\n";
         }
     }
@@ -280,7 +274,7 @@ void Reservation::editReservation()
     cin.ignore();
     cin.getline(pnr, 10);
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -288,7 +282,7 @@ void Reservation::editReservation()
     }
     else
     {
-        reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::app | ios::binary);
+        reservationsTempFileStream.open("../data/temp.dat", ios::out | ios::trunc | ios::binary);
 
         ticketFileStream.read((char *)this, sizeof(*this));
 
@@ -326,9 +320,7 @@ void Reservation::editReservation()
         }
 
         ticketFileStream.close();
-        reservationsTempFileStream.close();
-        remove("../data/reservations.dat");
-        rename("../data/temp.dat", "../data/reservations.dat");
+        replaceDataFile(reservationsTempFileStream, "../data/temp.dat", "../data/reservations.dat");
     }
 }
 
@@ -350,7 +342,7 @@ void Reservation::viewReservationByPNR()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -397,7 +389,7 @@ void Reservation::viewReservationsByName()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -444,7 +436,7 @@ void Reservation::viewReservationsByBusNo()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -491,7 +483,7 @@ void Reservation::viewReservationsBySource()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {
@@ -538,7 +530,7 @@ void Reservation::viewReservationsByDestination()
 
     printHeading("RESERVATIONS");
 
-    ticketFileStream.open("../data/reservations.dat", ios::in | ios::app | ios::binary);
+    ticketFileStream.open("../data/reservations.dat", ios::in | ios::binary);
 
     if (ticketFileStream.fail())
     {

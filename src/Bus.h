@@ -107,7 +107,7 @@ public:
 
     void setBusFare(double f)
     {
-        if (f)
+        if (f > 0)
             busFare = f;
     }
 };
