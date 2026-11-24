@@ -75,7 +75,8 @@ To get started with the development or usage of this project, follow the instruc
 
 ### Prerequisites
 
-- A C++ compiler (such as g++, clang++)
+- A C++ compiler with C++20 support (such as g++, clang++)
+- CMake 3.12 or newer, if you build with CMake
 - A suitable development environment (such as Visual Studio, Code::Blocks, or a text editor with command line tools)
 
 ### Installation
@@ -98,9 +99,9 @@ The sources are in `src/`. `src/main.cpp` includes `Bus.cpp` and `Reservation.cp
 
 ```bash
 mkdir -p build data
-g++ -std=c++11 src/main.cpp -o build/BusReservationSystem
+g++ -std=c++20 src/main.cpp -o build/BusReservationSystem
 # or
-clang++ -std=c++11 src/main.cpp -o build/BusReservationSystem
+clang++ -std=c++20 src/main.cpp -o build/BusReservationSystem
 ```
 
 Or build and run the smoke test with CMake:
