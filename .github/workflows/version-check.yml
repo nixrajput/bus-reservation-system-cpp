@@ -24,7 +24,7 @@ jobs:
         env:
           BASE_REF: ${{ github.base_ref }}
         run: |
-          git fetch --no-tags --depth=1 origin "$BASE_REF"
+          git fetch --no-tags origin "$BASE_REF"
           pr=$(tr -d ' \r\n' < VERSION)
           # If VERSION doesn't exist on the base yet (the PR that introduces it),
           # treat the base as 0.0.0 so any real version passes the bump check.
@@ -40,7 +40,7 @@ jobs:
         env:
           BASE_REF: ${{ github.base_ref }}
         run: |
-          changed=$(git diff --name-only "origin/$BASE_REF...HEAD")
+          changed=$(git diff --name-only --no-renames "origin/$BASE_REF...HEAD")
           echo "changed files:"; printf '%s\n' "$changed" | sed 's/^/  /'
           total=$(printf '%s\n' "$changed" | grep -c . || true)
           infra=$(printf '%s\n' "$changed" | grep -cE '^\.github/' || true)
