@@ -32,11 +32,34 @@ jobs:
           base=${base:-0.0.0}
           echo "pr=$pr" >> "$GITHUB_OUTPUT"
           echo "base=$base" >> "$GITHUB_OUTPUT"
+      # Not paths-ignore on the trigger: this job is a required check, so a
+      # skipped run leaves the PR pending forever. It always runs and waives the
+      # bump when only .github/ changed.
+      - name: Does this PR change anything that ships
+        id: scope
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          changed=$(git diff --name-only "origin/$BASE_REF...HEAD")
+          echo "changed files:"; printf '%s\n' "$changed" | sed 's/^/  /'
+          total=$(printf '%s\n' "$changed" | grep -c . || true)
+          infra=$(printf '%s\n' "$changed" | grep -cE '^\.github/' || true)
+          echo "total=${total:-0} infra-only=${infra:-0}"
+          if [ "${total:-0}" -gt "${infra:-0}" ]; then
+            echo "ships=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ships=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Compare
         env:
           PR: ${{ steps.v.outputs.pr }}
           BASE: ${{ steps.v.outputs.base }}
+          SHIPS: ${{ steps.scope.outputs.ships }}
         run: |
+          if [ "$SHIPS" != "true" ]; then
+            echo "Only .github/ changed; version bump not required."
+            exit 0
+          fi
           echo "base=$BASE  pr=$PR"
           if [ "$PR" = "$BASE" ]; then
             echo "::error::VERSION not bumped (still $BASE)."
